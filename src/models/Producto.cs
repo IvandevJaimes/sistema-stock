@@ -1,13 +1,13 @@
 public abstract class Producto
 {
-    public Producto(string Item_id, string Nombre, decimal Precio, int Cantidad)
+    public Producto(string Id, string Nombre, decimal Precio, int Cantidad)
     {
-        this.item_id = Item_id;
-        this.nombre = Nombre;
-        this.precio = Precio;
-        this.cantidad = Cantidad;
+        id = Id;
+        nombre = Nombre;
+        precio = Precio;
+        cantidad = Cantidad;
     }
-    public string item_id { get; private set; }
+    public string id { get; private set; }
     public string nombre { get; private set; }
     public decimal precio { get; private set; }
     public int cantidad { get; private set; }

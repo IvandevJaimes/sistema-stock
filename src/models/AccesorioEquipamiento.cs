@@ -1,7 +1,7 @@
 public class AccesorioEquipamiento : Producto
 {
-    public AccesorioEquipamiento(string Item_id, string Nombre, decimal Precio, int Cantidad, string Uso)
-        : base(Item_id, Nombre, Precio, Cantidad)
+    public AccesorioEquipamiento(string Id, string Nombre, decimal Precio, int Cantidad, string Uso)
+        : base(Id, Nombre, Precio, Cantidad)
     {
         uso = Uso;
     }

@@ -1,7 +1,7 @@
 public class MaterialInsumo : Producto
 {
-    public MaterialInsumo(string Item_id, string Nombre, decimal Precio, int Cantidad, string UnidadMedida)
-        : base(Item_id, Nombre, Precio, Cantidad)
+    public MaterialInsumo(string Id, string Nombre, decimal Precio, int Cantidad, string UnidadMedida)
+        : base(Id, Nombre, Precio, Cantidad)
     {
         unidadMedida = UnidadMedida;
     }

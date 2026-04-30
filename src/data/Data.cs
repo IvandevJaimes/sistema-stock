@@ -1,6 +1,6 @@
 public static class Data
 {
-    public static List<Sucursal> getData()
+    public static List<Sucursal> GetData()
     {
         return new List<Sucursal>
         {
