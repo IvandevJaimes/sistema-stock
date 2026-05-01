@@ -23,13 +23,13 @@
 // }
 
 var suc = new SucurSalService();
-
+var prod = new ProductoService();
 try
 {
-   Sucursal result = suc.ReadSucursal("Norte");
-   Console.WriteLine(result.direccion);
+    var result = suc.ReadSucursal("awd");
+    prod.GetProductos(result);
 }
 catch (Exception ex)
 {
-    Console.WriteLine(ex);
+    Console.WriteLine($"Error 404: {ex.Message}");
 }
