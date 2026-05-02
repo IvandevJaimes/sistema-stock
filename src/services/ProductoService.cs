@@ -1,22 +1,7 @@
-public class SucursalService
-{
-    private List<Sucursal> sucursales = Data.GetData();
-
-    public List<Sucursal> VerSucursales()
-    {
-        return sucursales;
-    }
-    public Sucursal? VerSucursal(string sucursalNombre)
-    {
-        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
-        if (sucursal == null) return null;
-        return sucursal;
-    }
-
-}
-
 public class ProductoService
 {
+    private SucursalService sucursalService = new SucursalService();
+
     public List<Producto> GetProductos(Sucursal sucursal)
     {
         return new List<Producto>(sucursal.stock);
@@ -24,7 +9,7 @@ public class ProductoService
 
     public Result<Producto> PostProducto(string sucursalNombre, string tipo, string nombre, decimal precio, int cantidad, string extra1 = "", string extra2 = "")
     {
-        var sucursal = new SucursalService().VerSucursal(sucursalNombre);
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
         if (sucursal == null) return Result<Producto>.Error("Sucursal no encontrada");
 
         var id = GenerarID.RandomID();
@@ -43,7 +28,7 @@ public class ProductoService
     }
     public Result<Producto> PutProducto(string sucursalNombre, int id, string nombre, decimal precio, int cantidad)
     {
-        var sucursal = new SucursalService().VerSucursal(sucursalNombre);
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
         if (sucursal == null) return Result<Producto>.Error("Sucursal no encontrada");
         var producto = sucursal.stock.Find(p => p.id == id);
         if (producto == null) return Result<Producto>.Error("Producto no encontrado en la sucursal");
@@ -55,7 +40,7 @@ public class ProductoService
 
     public Result<Producto> DeleteProducto(string sucursalNombre, int id)
     {
-        var sucursal = new SucursalService().VerSucursal(sucursalNombre);
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
         if (sucursal == null) return Result<Producto>.Error("Sucursal no encontrada");
         var producto = sucursal.stock.Find(p => p.id == id);
         if (producto == null) return Result<Producto>.Error("Producto no encontrado");
@@ -66,7 +51,7 @@ public class ProductoService
 
     public Result<decimal> VenderProducto(string sucursalNombre, int id, int cantidad)
     {
-        var sucursal = new SucursalService().VerSucursal(sucursalNombre);
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
         if (sucursal == null) return Result<decimal>.Error("Sucursal no encontrada");
 
         var producto = sucursal.stock.Find(p => p.id == id);

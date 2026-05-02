@@ -1,9 +1,9 @@
 public static class GenerarID
 {
-    private static readonly Random _random = new Random();
+    private static Random random = new Random();
     
     public static int RandomID()
     {
-        return _random.Next(10000, 99999);
+        return random.Next(100000000, 999999999);
     }
 }

@@ -1,11 +1,11 @@
 public static class Data
 {
-    private static List<Sucursal> _cache = null!;
+    private static List<Sucursal> cache = null!;
     public static List<Sucursal> GetData()
     {
-        if (_cache == null)
+        if (cache == null)
         {
-            _cache = new List<Sucursal>
+            cache = new List<Sucursal>
             {
                 new Sucursal("Centro", "25 de Mayo, San Miguel de Tucumán", new List<Producto>
                 {
@@ -24,6 +24,6 @@ public static class Data
                 })
             };
         }
-        return _cache;
+        return cache;
     }
 }
