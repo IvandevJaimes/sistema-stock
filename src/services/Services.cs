@@ -1,9 +1,11 @@
+using System.Linq;
+
 public class SucursalService
 {
     private List<Sucursal> sucursales = Data.GetData();
     public Sucursal VerSucursal(string sucursal)
     {
-
+        
         foreach (var s in sucursales)
         {
             if (sucursal == s.nombre)
@@ -26,18 +28,28 @@ public class ProductoService
     {
         var sucursalService = new SucursalService();
         var sucursal = sucursalService.VerSucursal(sucursalNombre);
+        
+        var id = GenerarID.RandomID();
 
         Producto nuevo = tipo switch
         {
-            "herramienta" => new Herramienta(nombre, precio, cantidad, extra1, extra2, tipo),
-            "materialInsumo" => new MaterialInsumo( nombre, precio, cantidad, extra1, tipo),
-            "accesorioEquipamiento" => new AccesorioEquipamiento( nombre, precio, cantidad, extra1, tipo),
+            "herramienta" => new Herramienta(id, nombre, precio, cantidad, extra1, extra2, tipo),
+            "materialInsumo" => new MaterialInsumo(id, nombre, precio, cantidad, extra1, tipo),
+            "accesorioEquipamiento" => new AccesorioEquipamiento(id, nombre, precio, cantidad, extra1, tipo),
             _ => null!
         };
-
-        if (nuevo == null) return null;
-
+        
         sucursal.AgregarProducto(nuevo);
         return nuevo;
+    }
+
+    public Producto? PutProducto(string sucursalNombre, int id, string nombre, decimal precio, int cantidad)
+    {
+        var sucursalService = new SucursalService();
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
+        var producto = sucursal.stock.FirstOrDefault(p => p.id == id);
+        if (producto == null) return null;
+        producto.ActualizarProducto(nombre, precio, cantidad);
+        return producto;
     }
 }

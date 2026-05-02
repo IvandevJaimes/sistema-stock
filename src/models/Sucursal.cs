@@ -14,9 +14,9 @@ public class Sucursal
     public string direccion { get; }
     public List<Producto> stock { get; private set; }
 
-
     public void AgregarProducto(Producto producto)
     {
         stock.Add(producto);
     }
+
 }

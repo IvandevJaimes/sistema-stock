@@ -39,3 +39,6 @@ catch (Exception ex)
 {
     Console.WriteLine($"Error 404: {ex.Message}");
 }
+
+// var put = new ProductoService();
+// put.PutProducto("Norte", 1, "Martillo Actualizado", 9500m, 28);
