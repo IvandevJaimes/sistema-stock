@@ -19,4 +19,9 @@ public class Sucursal
         stock.Add(producto);
     }
 
+    public void BorrarProducto(Producto producto)
+    {
+        stock.Remove(producto);
+    }
+
 }

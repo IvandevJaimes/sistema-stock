@@ -14,12 +14,11 @@ public abstract class Producto
     public decimal precio { get; private set; }
     public int cantidad { get; private set; }
     public string tipo { get; private set; }
-    public void vender(int cantidadVendida)
-    {
-        if (cantidad < cantidadVendida) throw new Exception("Stock insuficiente");
-        cantidad -= cantidadVendida;
-    }
 
+    public int vender (int cantidadVendida)
+    {
+        return cantidad -= cantidadVendida;
+    }
     public decimal calcularValor()
     {
         return precio * cantidad;
