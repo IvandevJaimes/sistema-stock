@@ -7,7 +7,7 @@ public abstract class Producto
         precio = Precio;
         cantidad = Cantidad;
         tipo = Tipo;
-        
+
     }
     public int id { get; private set; }
     public string nombre { get; private set; }
@@ -29,10 +29,10 @@ public abstract class Producto
         return cantidadVendida * precio;
     }
 
-    public void ActualizarProducto(string Nombre, decimal Precio, int Cantidad)
+    public void ActualizarProducto(string? Nombre = null, decimal? Precio = null, int? Cantidad = null)
     {
-        nombre = Nombre;
-        precio = Precio;
-        cantidad = Cantidad;
+        if (Nombre != null) nombre = Nombre;
+        if (Precio != null) precio = Precio ?? precio;
+        if (Cantidad != null) cantidad = Cantidad ?? cantidad;
     }
 }
