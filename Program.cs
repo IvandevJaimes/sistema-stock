@@ -22,12 +22,18 @@
 //     Console.WriteLine();
 // }
 
-var suc = new SucurSalService();
+var suc = new SucursalService();
 var prod = new ProductoService();
+prod.PostProducto("Norte", "herramienta", "Destornillador", 2500m, 20, "manual", "giro");
 try
+
 {
-    var result = suc.ReadSucursal("awd");
-    prod.GetProductos(result);
+    var result = suc.VerSucursal("Norte");
+    var productos = prod.GetProductos(result);
+    foreach (var producto in productos)
+    {
+        Console.WriteLine(producto.tipo + " " + producto.nombre + " " + producto.id);
+    }
 }
 catch (Exception ex)
 {

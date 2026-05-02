@@ -10,7 +10,13 @@ public class Sucursal
         direccion = Direccion;
         stock = Stock ?? new List<Producto>();
     }
-    public string nombre { get;}
-    public string direccion { get;} 
-    public List<Producto> stock { get; set; } 
+    public string nombre { get; }
+    public string direccion { get; }
+    public List<Producto> stock { get; private set; }
+
+
+    public void AgregarProducto(Producto producto)
+    {
+        stock.Add(producto);
+    }
 }
