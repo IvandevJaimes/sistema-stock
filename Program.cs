@@ -1,44 +1,45 @@
-﻿// var sucursales = Data.GetData();
-
-// foreach (var sucursal in sucursales)
-// {
-//     Console.WriteLine($"Sucursal: {sucursal.nombre}");
-//     Console.WriteLine($"Direccion: {sucursal.direccion}");
-//     Console.WriteLine("Stock:");
-
-//     foreach (var producto in sucursal.stock)
-//     {
-//         var linea = $"- {producto.nombre} (ID: {producto.id}, Precio: {producto.precio}, Cantidad: {producto.cantidad})";
-        
-//         if (producto is Herramienta h)
-//             linea += $" [Herramienta - Alimentación: {h.tipoAlimentacion}, Trabajo: {h.tipoTrabajo}]";
-//         else if (producto is MaterialInsumo m)
-//             linea += $" [Material/Insumo - Unidad: {m.unidadMedida}]";
-//         else if (producto is AccesorioEquipamiento a)
-//             linea += $" [Accesorio/Equipamiento - Uso: {a.uso}]";
-        
-//         Console.WriteLine(linea);
-//     }
-//     Console.WriteLine();
-// }
-
-var suc = new SucursalService();
+﻿var suc = new SucursalService();
 var prod = new ProductoService();
-prod.PostProducto("Norte", "herramienta", "Destornillador", 2500m, 20, "manual", "giro");
-try
-
+// 1. CREAR PRODUCTO (Verificamos null)
+Console.WriteLine("=== CREANDO PRODUCTO ===");
+var nuevo = prod.PostProducto("Norte", "herramienta", "Destornillador", 2500m, 20, "manual", "giro");
+if (nuevo != null) // ✅ Verificamos
 {
-    var result = suc.VerSucursal("Norte");
+    Console.WriteLine($"Creado: {nuevo.nombre} (ID: {nuevo.id})");
+}
+else
+{
+    Console.WriteLine("ERROR: No se pudo crear el producto");
+}
+// 2. MOSTRAR TODOS LOS PRODUCTOS
+Console.WriteLine("\n=== LISTA DESPUÉS DE CREAR ===");
+var result = suc.VerSucursal("Norte");
+if (result != null) // ✅ Verificamos
+{
     var productos = prod.GetProductos(result);
-    foreach (var producto in productos)
+    foreach (var p in productos)
     {
-        Console.WriteLine(producto.tipo + " " + producto.nombre + " " + producto.id);
+        Console.WriteLine($"ID: {p.id} - {p.tipo} - {p.nombre} - ${p.precio}");
     }
 }
-catch (Exception ex)
+// 3. ACTUALIZAR EL PRODUCTO CREADO
+Console.WriteLine("\n=== ACTUALIZANDO PRODUCTO ===");
+if (nuevo != null) // ✅ Necesitamos el ID
 {
-    Console.WriteLine($"Error 404: {ex.Message}");
+    var actualizado = prod.PutProducto("Norte", nuevo.id, "Destornillador Pro", 3200m, 18);
+    
+    if (actualizado != null) // ✅ Verificamos
+    {
+        Console.WriteLine($"Actualizado: {actualizado.nombre} (ID: {actualizado.id})");
+    }
 }
-
-// var put = new ProductoService();
-// put.PutProducto("Norte", 1, "Martillo Actualizado", 9500m, 28);
+// 4. MOSTRAR NUEVAMENTE
+Console.WriteLine("\n=== LISTA DESPUÉS DE ACTUALIZAR ===");
+if (result != null)
+{
+    var productosActualizados = prod.GetProductos(result);
+    foreach (var p in productosActualizados)
+    {
+        Console.WriteLine($"ID: {p.id} - {p.tipo} - {p.nombre} - ${p.precio}");
+    }
+}

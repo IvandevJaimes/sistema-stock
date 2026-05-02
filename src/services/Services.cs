@@ -47,7 +47,7 @@ public class ProductoService
     {
         var sucursalService = new SucursalService();
         var sucursal = sucursalService.VerSucursal(sucursalNombre);
-        var producto = sucursal.stock.FirstOrDefault(p => p.id == id);
+        var producto = sucursal.stock.Find(p => p.id == id);
         if (producto == null) return null;
         producto.ActualizarProducto(nombre, precio, cantidad);
         return producto;
