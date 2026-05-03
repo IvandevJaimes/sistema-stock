@@ -1,9 +1,14 @@
 public class MaterialInsumo : Producto
 {
-    public MaterialInsumo(int Id, string Nombre, decimal Precio, int Cantidad, string UnidadMedida, string Tipo)
-        : base(Id, Nombre, Precio, Cantidad, Tipo)
+    public MaterialInsumo(int Id, string Nombre, decimal Precio, int Cantidad, string UnidadMedida)
+        : base(Id, Nombre, Precio, Cantidad) 
     {
         unidadMedida = UnidadMedida;
     }
-    public string unidadMedida { get; set; }
+    public string unidadMedida { get; protected set; }
+
+    public override string ObtenerDetalles()
+    {
+        return $"Tipo: MaterialInsumo | Medida: {unidadMedida}";
+    }
 }

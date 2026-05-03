@@ -40,7 +40,7 @@ Console.WriteLine("=== SECCIÓN 2: CREAR PRODUCTOS ===\n");
 Console.WriteLine("2.1. Crear HERRAMIENTA (Éxito):");
 var h1 = productoCtrl.CrearProducto("Norte", "herramienta", "Taladro Bosch", 25000m, 10, "electrico", "perforacion");
 if (h1.success)
-    Console.WriteLine($"   ✅ Creado: {h1.data!.nombre} | ID: {h1.data.id} | Tipo: Herramienta | Alimentación: {((Herramienta)h1.data).tipoAlimentacion}");
+    Console.WriteLine($"   ✅ Creado: {h1.data!.nombre} | ID: {h1.data.id} | {h1.data.ObtenerDetalles()}");
 else
     Console.WriteLine($"   ❌ Error: {h1.mensaje}");
 Console.WriteLine();
@@ -48,7 +48,7 @@ Console.WriteLine();
 Console.WriteLine("2.2. Crear MATERIAL INSUMO (Éxito):");
 var m1 = productoCtrl.CrearProducto("Norte", "materialInsumo", "Pegamento 50ml", 800m, 30, "tubo", "");
 if (m1.success)
-    Console.WriteLine($"   ✅ Creado: {m1.data!.nombre} | ID: {m1.data.id} | Tipo: MaterialInsumo | Medida: {((MaterialInsumo)m1.data).unidadMedida}");
+    Console.WriteLine($"   ✅ Creado: {m1.data!.nombre} | ID: {m1.data.id} | {m1.data.ObtenerDetalles()}");
 else
     Console.WriteLine($"   ❌ Error: {m1.mensaje}");
 Console.WriteLine();
@@ -56,7 +56,7 @@ Console.WriteLine();
 Console.WriteLine("2.3. Crear ACCESORIO EQUIPAMIENTO (Éxito):");
 var a1 = productoCtrl.CrearProducto("Norte", "accesorioEquipamiento", "Casco Seguridad", 4500m, 20, "proteccion", "");
 if (a1.success)
-    Console.WriteLine($"   ✅ Creado: {a1.data!.nombre} | ID: {a1.data.id} | Tipo: Accesorio | Uso: {((AccesorioEquipamiento)a1.data).uso}");
+    Console.WriteLine($"   ✅ Creado: {a1.data!.nombre} | ID: {a1.data.id} | {a1.data.ObtenerDetalles()}");
 else
     Console.WriteLine($"   ❌ Error: {a1.mensaje}");
 Console.WriteLine();
@@ -87,7 +87,7 @@ var productosNorte = productoCtrl.ListarProductos("Norte");
 Console.WriteLine($"   Total: {productosNorte.Count} productos");
 foreach (var p in productosNorte)
 {
-    Console.WriteLine($"   - ID: {p.id} | {p.nombre} | ${p.precio} | Stock: {p.cantidad} | Tipo: {p.GetType().Name}");
+    Console.WriteLine($"   - ID: {p.id} | {p.nombre} | ${p.precio} | Stock: {p.cantidad} | {p.ObtenerDetalles()}");
 }
 Console.WriteLine();
 

@@ -16,9 +16,9 @@ public class ProductoService
 
         Producto? nuevo = tipo switch
         {
-            "herramienta" => new Herramienta(id, nombre, precio, cantidad, extra1, extra2, tipo),
-            "materialInsumo" => new MaterialInsumo(id, nombre, precio, cantidad, extra1, tipo),
-            "accesorioEquipamiento" => new AccesorioEquipamiento(id, nombre, precio, cantidad, extra1, tipo),
+            "herramienta" => new Herramienta(id, nombre, precio, cantidad, extra1, extra2),
+            "materialInsumo" => new MaterialInsumo(id, nombre, precio, cantidad, extra1),
+            "accesorioEquipamiento" => new AccesorioEquipamiento(id, nombre, precio, cantidad, extra1),
             _ => null
         };
         if (nuevo == null) return Result<Producto>.Error("Tipo de producto inválido");

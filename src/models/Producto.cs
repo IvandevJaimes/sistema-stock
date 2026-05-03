@@ -1,19 +1,19 @@
 public abstract class Producto
 {
-    public Producto(int Id, string Nombre, decimal Precio, int Cantidad, string Tipo)
+    public Producto(int Id, string Nombre, decimal Precio, int Cantidad)
     {
         id = Id;
         nombre = Nombre;
         precio = Precio;
         cantidad = Cantidad;
-        tipo = Tipo;
-
     }
     public int id { get; private set; }
     public string nombre { get; private set; }
     public decimal precio { get; private set; }
     public int cantidad { get; private set; }
-    public string tipo { get; private set; }
+
+
+    public abstract string ObtenerDetalles();
 
     public int vender (int cantidadVendida)
     {
