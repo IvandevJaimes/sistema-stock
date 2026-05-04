@@ -1,8 +1,0 @@
-===== COMPROBANTE DE VENTA =====
-Numero: V-20260504122522
-Sucursal: Centro
-Fecha: 4/5/2026 12:25:22 p. m.
-
-Martillo x25 - $ 9.000,00 - Subtotal: $ 225.000,00
-
-TOTAL: $ 225.000,00

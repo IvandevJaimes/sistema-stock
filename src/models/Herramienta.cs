@@ -6,8 +6,8 @@ public class Herramienta : Producto
         tipoAlimentacion = TipoAlimentacion;
         tipoTrabajo = TipoTrabajo;
     }
-    public string tipoAlimentacion { get; protected set; }
-    public string tipoTrabajo { get; protected set; }
+    public string tipoAlimentacion { get; private set; }
+    public string tipoTrabajo { get; private set; }
     public override string ObtenerDetalles()
     {
         return $"Alimentación: {tipoAlimentacion} | Trabajo: {tipoTrabajo}";
