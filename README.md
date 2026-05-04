@@ -5,6 +5,7 @@ Aplicación de consola para gestión de inventario en múltiples sucursales.
 - Spectre.Console (interfaz de terminal)
 - Arquitectura por capas (models, services, controllers, UI)
 ## Estructura del Proyecto
+```bash
 sistemaStock/
 ├── src/
 │   ├── models/          # Entidades y objetos de valor
@@ -39,6 +40,7 @@ sistemaStock/
 ├── Program.cs
 ├── sistemaStock.csproj
 └── sistemaStock.sln
+```
 ## Funcionalidades
 - Gestionar productos (crear, editar, eliminar, listar)
 - Buscar productos por nombre
