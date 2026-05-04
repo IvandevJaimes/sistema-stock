@@ -37,4 +37,10 @@ public class ProductoController
         return productosObtenidos;
     }
 
-}
+    public Result<List<Producto>> BuscarProducto(string sucursalNombre, string productoNombre)
+    {
+        var productos = productoService.BuscarProducto(sucursalNombre, productoNombre);
+        return productos;
+    }
+
+} 

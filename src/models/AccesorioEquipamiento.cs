@@ -9,6 +9,6 @@ public class AccesorioEquipamiento : Producto
 
     public override string ObtenerDetalles()
     {
-        return $"Tipo: Accesorio | Uso: {uso}";
+        return $"Uso: {uso}";
     }
 }

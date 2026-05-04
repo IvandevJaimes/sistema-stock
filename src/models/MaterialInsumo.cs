@@ -9,6 +9,6 @@ public class MaterialInsumo : Producto
 
     public override string ObtenerDetalles()
     {
-        return $"Tipo: MaterialInsumo | Medida: {unidadMedida}";
+        return $"Medida: {unidadMedida}";
     }
 }

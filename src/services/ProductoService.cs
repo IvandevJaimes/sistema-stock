@@ -63,4 +63,19 @@ public class ProductoService
         var ingresos = producto.calcularIngresos(cantidad);
         return Result<decimal>.Ok(ingresos);
     }
+
+    public Result<List<Producto>> BuscarProducto(string sucursalNombre, string nombre)
+    {
+        var sucursal = sucursalService.VerSucursal(sucursalNombre);
+        if (sucursal == null)
+            return Result<List<Producto>>.Error("Sucursal no encontrada");
+
+        var productos = sucursal.stock
+            .Where(p => p.nombre.Contains(nombre, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (!productos.Any())
+            return Result<List<Producto>>.Error("Producto no encontrado");
+        return Result<List<Producto>>.Ok(productos);
+    }
 }

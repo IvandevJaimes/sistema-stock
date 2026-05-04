@@ -10,6 +10,6 @@ public class Herramienta : Producto
     public string tipoTrabajo { get; protected set; }
     public override string ObtenerDetalles()
     {
-        return $"Tipo: Herramienta | Alimentación: {tipoAlimentacion} | Trabajo: {tipoTrabajo}";
+        return $"Alimentación: {tipoAlimentacion} | Trabajo: {tipoTrabajo}";
     }
 }
