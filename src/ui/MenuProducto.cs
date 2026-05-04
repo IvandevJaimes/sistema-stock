@@ -8,6 +8,7 @@ public class MenuProducto
     private MenuEditar menuEditar = new MenuEditar();
     private MenuEliminar menuEliminar = new MenuEliminar();
 
+    private MenuCrear menuCrear = new MenuCrear();
     private Producto SeleccionarProducto(List<Producto> productos)
     {
         return AnsiConsole.Prompt(
@@ -67,6 +68,7 @@ public class MenuProducto
                     .Title("[blue]Elegir opción:[/]")
                     .HighlightStyle("bold")
                     .AddChoices(
+                        "Crear producto",
                         "Editar producto",
                         "Eliminar producto",
                         "Vender producto",
@@ -76,6 +78,9 @@ public class MenuProducto
 
             switch (opcion)
             {
+                case "Crear producto":
+                    menuCrear.EjecutarCrear(nombreSucursal);
+                    break;
                 case "Editar producto":
                     AnsiConsole.Markup("[green]Seleccionar producto a editar:[/]");
                     AnsiConsole.WriteLine();

@@ -4,6 +4,6 @@ public static class GenerarID
     
     public static int RandomID()
     {
-        return random.Next(100000000, 999999999);
+        return random.Next(10000, 99999);
     }
 }

@@ -3,6 +3,7 @@ public class MenuSucursal
 {
     private SucursalController sucursalCtrl = new SucursalController();
     private MenuProducto menuProducto = new MenuProducto();
+    private MenuBuscar menuBuscar = new MenuBuscar();
     public void Ejecutar(string nombreSucursal)
     {
         
@@ -18,7 +19,7 @@ public class MenuSucursal
         while (!salir)
         {
             AnsiConsole.Clear();
-            
+
             AnsiConsole.Write(titulo);
             AnsiConsole.WriteLine();
             AnsiConsole.MarkupLine($"[purple]Direccion: {sucursal?.direccion}[/]");
@@ -28,15 +29,16 @@ public class MenuSucursal
                 new SelectionPrompt<string>()
                     .Title("[blue]Elegir opcion: [/]")
                     .HighlightStyle("bold")
-                    .AddChoices("Listar productos", "Buscar producto", "[grey]↩ Volver[/]")
+                    .AddChoices("Gestionar", "Buscar producto", "[grey]↩ Volver[/]")
             );
 
             switch (opcion)
             {
-                case "Listar productos": menuProducto.Ejecutar(nombreSucursal);
+                case "Gestionar": menuProducto.Ejecutar(nombreSucursal);
                     break;
 
                 case "Buscar producto":
+                    menuBuscar.EjecutarBuscar(nombreSucursal);
                     break;
 
                 case "[grey]↩ Volver[/]":
