@@ -1,4 +1,5 @@
 using Spectre.Console;
+
 public class MenuBuscar
 {
     private SucursalController sucursalCtrl = new SucursalController();

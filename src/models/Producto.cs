@@ -15,9 +15,9 @@ public abstract class Producto
 
     public abstract string ObtenerDetalles();
 
-    public int vender (int cantidadVendida)
+    public void vender (int cantidadVendida)
     {
-        return cantidad -= cantidadVendida;
+        cantidad -= cantidadVendida;
     }
     public decimal calcularValor()
     {

@@ -71,7 +71,6 @@ public class MenuProducto
                         "Crear producto",
                         "Editar producto",
                         "Eliminar producto",
-                        "Vender producto",
                         "[grey]↩ Volver[/]"
                     )
             );
@@ -105,9 +104,6 @@ public class MenuProducto
                     }
                     var productoSeleccionadoABorrar = SeleccionarProducto(productos);
                     menuEliminar.EjecutarEliminar(nombreSucursal, productoSeleccionadoABorrar);
-                    break;
-
-                case "Vender producto":
                     break;
 
                 case "[grey]↩ Volver[/]":

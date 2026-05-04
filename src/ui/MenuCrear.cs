@@ -6,7 +6,7 @@ public class MenuCrear
     public void EjecutarCrear(string nombreSucursal)
     {
         string extra1 = "", extra2 = "";
-        string tiopoProducto = "";
+        string tipoProducto = "";
         AnsiConsole.Clear();
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
             .LeftJustified()
@@ -52,16 +52,16 @@ public class MenuCrear
         switch (tipo)
         {
             case "Herramienta":
-                tiopoProducto = "herramienta";
+                tipoProducto = "herramienta";
                 extra1 = AnsiConsole.Ask<string>("Tipo de alimentación:");
                 extra2 = AnsiConsole.Ask<string>("Tipo de trabajo:");
                 break;
             case "Material / Insumo":
-                tiopoProducto = "materialInsumo";
+                tipoProducto = "materialInsumo";
                 extra1 = AnsiConsole.Ask<string>("Unidad de medida:");
                 break;
             case "Accesorio / Equipamiento":
-                tiopoProducto = "accesorioEquipamiento";
+                tipoProducto = "accesorioEquipamiento";
                 extra1 = AnsiConsole.Ask<string>("Uso:");
                 break;
 
@@ -72,7 +72,7 @@ public class MenuCrear
 
         }
 
-        var resultado = productoCtrl.CrearProducto(nombreSucursal, tiopoProducto, nombre, precio, cantidad, extra1, extra2);
+        var resultado = productoCtrl.CrearProducto(nombreSucursal, tipoProducto, nombre, precio, cantidad, extra1, extra2);
 
         if (resultado.success)
             Alerta.Exito("Producto creado correctamente");
