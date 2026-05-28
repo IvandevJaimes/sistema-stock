@@ -1,6 +1,4 @@
 using Spectre.Console;
-
-
 public class MenuPrincipal
 {
     private MenuSucursal menuSucursal = new MenuSucursal();
@@ -11,7 +9,6 @@ public class MenuPrincipal
         var titulo = new FigletText("Sistema de Stock")
             .LeftJustified()
             .Color(Color.Yellow);
-
 
         var salir = false;
 

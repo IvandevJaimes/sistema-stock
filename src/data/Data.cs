@@ -9,18 +9,18 @@ public static class Data
             {
                 new Sucursal("Centro", "25 de Mayo, San Miguel de Tucumán", new List<Producto>
                 {
-                    new Herramienta(88365, "Martillo", 9000, 25, "manual", "golpe"),
-                    new Herramienta(26792, "Pico", 34000.99m, 15, "manual", "excavacion"),
-                    new Herramienta(89547, "Sierra Circular", 15500.50m, 10, "electrico", "corte"),
-                    new MaterialInsumo(91871, "Caja de Clavos 1kg", 1200.50m, 50, "caja"),
-                    new AccesorioEquipamiento(59738, "Pincel Professional", 850.50m, 40, "pintura")
+                    new Televisor(88365, "Televisor Phillips", 180000, 25, 22, "LCD"),
+                    new Televisor(26792, "Televisor Samsung", 130000, 10, 58, "oled"),
+                    new Televisor(89547, "Televisor LG", 2000000, 10, 40, "Amoled"),
+                    new Heladera(91871, "Heladera Samsung", 180000, 5 , 319, "No frost"),
+                    new Lavarropa(59738, "Lavarropa Dream", 800000, 40, 10, "automatico")
                 }),
                 new Sucursal("Norte", "av. sarmiento 550, San Miguel de Tucumán", new List<Producto>
                 {
-                    new Herramienta(67349, "Martillo", 9000, 30, "manual", "golpe"),
-                    new Herramienta(71398, "taladro 750 wats", 39000, 5, "electrico", "perforacion"),
-                    new MaterialInsumo(87824, "Cemento Holcim 50kg", 450.50m, 80, "kg"),
-                    new AccesorioEquipamiento(90023, "Escalera Aluminio 5m", 12500, 10, "acceso")
+                    new Televisor(67349, "Televisor Philco", 500000, 30, 40, "LCD"),
+                    new Televisor(71398, "Televisor Noblex", 620000, 5, 55, "LCD"),
+                    new Heladera(87824, "Heladera Gafa", 900000, 3, 282, "No frost"),
+                    new Lavarropa(90023, "Lavarropa Gadnic", 514000, 8, 75, "Automatico")
                 })
             };
         }

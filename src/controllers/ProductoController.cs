@@ -4,7 +4,7 @@ public class ProductoController
 
     private SucursalService sucursalService = new SucursalService();
 
-    public Result<Producto> CrearProducto(string sucursalNombre, string tipo, string nombre, decimal precio, int cantidad, string extra1 = "", string extra2 = "")
+    public Result<Producto> CrearProducto(string sucursalNombre, string tipo, string nombre, decimal precio, int cantidad, double extra1, string extra2 = "")
     {
         var nuevoProducto = productoService.PostProducto(sucursalNombre, tipo, nombre, precio, cantidad, extra1, extra2);
         return nuevoProducto;

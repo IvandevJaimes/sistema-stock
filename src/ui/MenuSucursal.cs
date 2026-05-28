@@ -6,6 +6,7 @@ public class MenuSucursal
     private MenuBuscar menuBuscar = new MenuBuscar();
 
     private MenuVender menuVender = new MenuVender();
+    private MenuVentas menuVentas = new MenuVentas();
     public void Ejecutar(string nombreSucursal)
     {
         
@@ -31,7 +32,7 @@ public class MenuSucursal
                 new SelectionPrompt<string>()
                     .Title("[blue]Elegir opcion: [/]")
                     .HighlightStyle("bold")
-                    .AddChoices("Gestionar", "Buscar producto","Vender producto", "[grey]↩ Volver[/]")
+                    .AddChoices("Gestionar", "Buscar producto","Vender producto", "Ver ventas", "[grey]↩ Volver[/]")
             );
 
             switch (opcion)
@@ -45,6 +46,10 @@ public class MenuSucursal
 
                 case "Vender producto":
                     menuVender.EjecutarVender(nombreSucursal);
+                    break;
+
+                case "Ver ventas":
+                    menuVentas.Ejecutar(nombreSucursal);
                     break;
 
                 case "[grey]↩ Volver[/]":

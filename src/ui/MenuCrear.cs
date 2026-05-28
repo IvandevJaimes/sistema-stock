@@ -23,7 +23,7 @@ public class MenuCrear
             new SelectionPrompt<string>()
                 .Title("[yellow]Seleccione el tipo de producto:[/]")
                 .HighlightStyle("bold")
-                .AddChoices("Herramienta", "Material / Insumo", "Accesorio / Equipamiento", "[grey]↩ Volver[/]")
+                .AddChoices("Heladera", "Lavarropa", "Televisor", "[grey]↩ Volver[/]")
         );
 
         if (tipo == "[grey]↩ Volver[/]")
@@ -51,18 +51,20 @@ public class MenuCrear
 
         switch (tipo)
         {
-            case "Herramienta":
-                tipoProducto = "herramienta";
-                extra1 = AnsiConsole.Ask<string>("Tipo de alimentación:");
-                extra2 = AnsiConsole.Ask<string>("Tipo de trabajo:");
+            case "Heladera":
+                tipoProducto = "Heladera";
+                extra1 = AnsiConsole.Ask<string>("Capacidad (Litros):");
+                extra2 = AnsiConsole.Ask<string>("Tipo:");
                 break;
-            case "Material / Insumo":
-                tipoProducto = "materialInsumo";
-                extra1 = AnsiConsole.Ask<string>("Unidad de medida:");
+            case "Lavarropa":
+                tipoProducto = "Lavarropa";
+                extra1 = AnsiConsole.Ask<string>("Capacidad (Kg):");
+                extra2 = AnsiConsole.Ask<string>("Tipo:");
                 break;
-            case "Accesorio / Equipamiento":
-                tipoProducto = "accesorioEquipamiento";
-                extra1 = AnsiConsole.Ask<string>("Uso:");
+            case "Televisor":
+                tipoProducto = "Televisor";
+                extra1 = AnsiConsole.Ask<string>("Pulgadas:");
+                extra2 = AnsiConsole.Ask<string>("Tipo de Pantalla:");
                 break;
 
             case "[grey]↩ Volver[/]":
@@ -72,7 +74,7 @@ public class MenuCrear
 
         }
 
-        var resultado = productoCtrl.CrearProducto(nombreSucursal, tipoProducto, nombre, precio, cantidad, extra1, extra2);
+        var resultado = productoCtrl.CrearProducto(nombreSucursal, tipoProducto, nombre, precio, cantidad, Convert.ToDouble(extra1), extra2);
 
         if (resultado.success)
             Alerta.Exito("Producto creado correctamente");

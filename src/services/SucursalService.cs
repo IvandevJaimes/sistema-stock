@@ -13,4 +13,18 @@ public class SucursalService
         return sucursal;
     }
 
+    public void RegistrarVenta(string sucursalNombre, List<CarritoItem> item)
+    {
+        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
+        if (sucursal != null)
+        {
+            sucursal.RegistrarVentas(item);
+        }
+    }
+    public List<CarritoItem>? MostrarVentas(string sucursalNombre)
+    {
+        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
+        return sucursal?.ventas;
+    }
+
 }

@@ -1,10 +1,10 @@
-using System.Diagnostics;
 using Spectre.Console;
 public class MenuVender
 {
     private ProductoController productoCtrl = new ProductoController();
     List<CarritoItem> carrito = new List<CarritoItem>();
 
+    private SucursalController sucursalController = new SucursalController();
     private MenuComprobante comprobante = new MenuComprobante();
     public void EjecutarVender(string nombreSucursal)
     {
@@ -170,9 +170,11 @@ public class MenuVender
 
                         ingresos += resultado.data;
                     }
-
                     if (!error)
                     {
+                        sucursalController.RegistrarVenta(nombreSucursal, carrito);
+                        var ventas = sucursalController.MostrarVentas(nombreSucursal);
+                        AnsiConsole.WriteLine($"Ventas registradas: {ventas?.Count} items"); 
                         comprobante.Generar(nombreSucursal, carrito, ingresos);
                         carrito.Clear();
                         salir = true;

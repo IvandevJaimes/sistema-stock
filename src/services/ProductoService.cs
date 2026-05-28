@@ -7,7 +7,7 @@ public class ProductoService
         return new List<Producto>(sucursal.stock);
     }
 
-    public Result<Producto> PostProducto(string sucursalNombre, string tipo, string nombre, decimal precio, int cantidad, string extra1 = "", string extra2 = "")
+    public Result<Producto> PostProducto(string sucursalNombre, string tipo, string nombre, decimal precio, int cantidad, double extra1, string extra2 = "")
     {
         var sucursal = sucursalService.VerSucursal(sucursalNombre);
         if (sucursal == null) return Result<Producto>.Error("Sucursal no encontrada");
@@ -16,9 +16,9 @@ public class ProductoService
 
         Producto? nuevo = tipo switch
         {
-            "herramienta" => new Herramienta(id, nombre, precio, cantidad, extra1, extra2),
-            "materialInsumo" => new MaterialInsumo(id, nombre, precio, cantidad, extra1),
-            "accesorioEquipamiento" => new AccesorioEquipamiento(id, nombre, precio, cantidad, extra1),
+            "Televisor" => new Televisor(id, nombre, precio, cantidad, extra1, extra2),
+            "Lavarropa" => new Lavarropa(id, nombre, precio, cantidad, extra1, extra2),
+            "Heladera" => new Heladera(id, nombre, precio, cantidad, extra1, extra2),
             _ => null
         };
         if (nuevo == null) return Result<Producto>.Error("Tipo de producto inválido");
