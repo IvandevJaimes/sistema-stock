@@ -1,35 +1,29 @@
 public class Sucursal
 {
     public Sucursal(
+        int IdSucursal = 0,
         string Nombre = "",
         string Direccion = "",
         List<Producto>? Stock = null,
-        List<CarritoItem>? Ventas = null 
+        List<VentaDetalle>? Ventas = null 
     )
     {
         nombre = Nombre;
+        idSucursal = IdSucursal;
         direccion = Direccion;
         stock = Stock ?? new List<Producto>();
-        ventas = Ventas ?? new List<CarritoItem>();
+        ventas = Ventas ?? new List<VentaDetalle>();
     }
     public string nombre { get; }
+    public int idSucursal { get; }
     public string direccion { get; }
-
-    public List<CarritoItem> ventas { get; private set; }
     public List<Producto> stock { get; private set; }
+    public List<VentaDetalle> ventas { get; private set; }
+    
 
-    public void AgregarProducto(Producto producto)
+    public List<VentaDetalle> verVentas()
     {
-        stock.Add(producto);
-    }
-    public void BorrarProducto(Producto producto)
-    {
-        stock.Remove(producto);
+        return ventas;
     }
 
-    public void RegistrarVentas(List<CarritoItem> items)
-    {
-        foreach (var item in items)
-            ventas.Add(item);
-    }
 }

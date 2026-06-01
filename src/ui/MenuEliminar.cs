@@ -2,7 +2,7 @@ using Spectre.Console;
 public class MenuEliminar
 {
     private ProductoController productoCtrl = new ProductoController();
-    public void EjecutarEliminar(string nombreSucursal, Producto productoSeleccionado)
+    public async Task EjecutarEliminar(string nombreSucursal, Producto productoSeleccionado)
     {
         AnsiConsole.Clear();
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
@@ -52,7 +52,7 @@ public class MenuEliminar
                     Alerta.Error("Operación cancelada");
                     return; 
                 }
-                var resultado = productoCtrl.EliminarProducto(nombreSucursal, productoSeleccionado.id);
+                var resultado = await productoCtrl.EliminarProducto(nombreSucursal, productoSeleccionado.id);
                 if (resultado.success)
                 {
                     Alerta.Exito($"Producto '{productoSeleccionado.nombre}' eliminado");

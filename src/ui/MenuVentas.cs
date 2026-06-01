@@ -1,9 +1,10 @@
+
 using Spectre.Console;
 public class MenuVentas
 {
     private SucursalController sucursalController = new SucursalController();
 
-    public void Ejecutar(string nombreSucursal)
+    public async Task Ejecutar(string nombreSucursal)
     {
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
             .LeftJustified()
@@ -21,7 +22,16 @@ public class MenuVentas
             AnsiConsole.Write(panel);
             AnsiConsole.WriteLine();
 
-            var ventas = sucursalController.MostrarVentas(nombreSucursal);
+            var ventas = await sucursalController.MostrarVentas(nombreSucursal);
+
+            if (ventas.success == false)
+            {
+                AnsiConsole.MarkupLine($"[red]{ventas.mensaje}[/]");
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine("[grey]Presiona cualquier tecla para volver...[/]");
+                Console.ReadKey();
+                return;
+            }   
 
             var tabla = new Table();
             tabla.Border(TableBorder.Rounded);
@@ -33,29 +43,29 @@ public class MenuVentas
             tabla.AddColumn("[bold yellow]Precio unitario[/]");
             tabla.AddColumn("[bold yellow]Subtotal[/]");
 
-            if (ventas != null && ventas.Count > 0)
-            {
-                foreach (var v in ventas)
-                {
-                    tabla.AddRow(
-                        $"[green]{v.nombre}[/]",
-                        $"[cyan]{v.cantidad}[/]",
-                        $"[yellow]{v.precio:C}[/]",
-                        $"[magenta]{v.cantidad * v.precio:C}[/]"
-                    );
-                }
-                AnsiConsole.Write(tabla);
-
-                decimal gananciasTotales = ventas.Sum(v => v.cantidad * v.precio);
-                AnsiConsole.WriteLine();
-                AnsiConsole.MarkupLine($"[bold green]Ganancias totales: {gananciasTotales:C}[/]");
-            }
-            else
+            if (ventas.data == null || !ventas.data.Any())
             {
                 tabla.AddRow("[grey]-[/]", "[grey]-[/]", "[grey]-[/]", "[grey]-[/]");
                 AnsiConsole.Write(tabla);
                 AnsiConsole.WriteLine();
                 AnsiConsole.MarkupLine("[grey]No hay ventas registradas[/]");
+            }
+            else
+            {
+                foreach (var v in ventas.data)
+                {
+                    tabla.AddRow(
+                        $"[green]{v.nombreProducto}[/]",
+                        $"[cyan]{v.cantidad}[/]",
+                        $"[yellow]{v.precioUnitario:C}[/]",
+                        $"[magenta]{v.cantidad * v.precioUnitario:C}[/]"
+                    );
+                }
+                AnsiConsole.Write(tabla);
+
+                decimal gananciasTotales = ventas.data.Sum(v => v.cantidad * v.precioUnitario);
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine($"[bold green]Ganancias totales: {gananciasTotales:C}[/]");
             }
 
             AnsiConsole.WriteLine();

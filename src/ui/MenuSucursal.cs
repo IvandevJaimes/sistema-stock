@@ -1,16 +1,27 @@
 using Spectre.Console;
 public class MenuSucursal
 {
-    private SucursalController sucursalCtrl = new SucursalController();
+    private ProductoController productoCtrl = new ProductoController();
     private MenuProducto menuProducto = new MenuProducto();
     private MenuBuscar menuBuscar = new MenuBuscar();
 
     private MenuVender menuVender = new MenuVender();
     private MenuVentas menuVentas = new MenuVentas();
-    public void Ejecutar(string nombreSucursal)
+    public async Task Ejecutar(string nombreSucursal)
     {
         
-        var sucursal = sucursalCtrl.ObtenerSucursal(nombreSucursal);
+        var productos = await productoCtrl.ListarProductos(nombreSucursal);
+
+        if (productos.data == null)
+        {
+            AnsiConsole.MarkupLine($"[yellow]No hay productos en la sucursal {nombreSucursal}[/]");
+            AnsiConsole.MarkupLine($"[green]Puedes agregar productos desde la opción 'Gestionar'[/]");
+        }
+        else if (productos.success == false)
+        {
+            AnsiConsole.MarkupLine($"[red]{productos.mensaje}[/]");
+            return;
+        }
 
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
             .LeftJustified()
@@ -25,8 +36,7 @@ public class MenuSucursal
 
             AnsiConsole.Write(titulo);
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[purple]Direccion: {sucursal?.direccion}[/]");
-            AnsiConsole.MarkupLine($"[cyan]Productos totales: {sucursal?.stock.Count()}[/]");
+            AnsiConsole.MarkupLine($"[cyan]Productos totales: {productos.data?.Count() ?? 0}[/]");
             AnsiConsole.WriteLine();
             var opcion = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -37,19 +47,19 @@ public class MenuSucursal
 
             switch (opcion)
             {
-                case "Gestionar": menuProducto.Ejecutar(nombreSucursal);
+                case "Gestionar": await menuProducto.Ejecutar(nombreSucursal);
                     break;
 
                 case "Buscar producto":
-                    menuBuscar.EjecutarBuscar(nombreSucursal);
+                    await menuBuscar.EjecutarBuscar(nombreSucursal);
                     break;
 
                 case "Vender producto":
-                    menuVender.EjecutarVender(nombreSucursal);
+                    await menuVender.EjecutarVender(nombreSucursal);
                     break;
 
                 case "Ver ventas":
-                    menuVentas.Ejecutar(nombreSucursal);
+                    await menuVentas.Ejecutar(nombreSucursal);
                     break;
 
                 case "[grey]↩ Volver[/]":

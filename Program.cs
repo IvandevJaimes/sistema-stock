@@ -1,2 +1,2 @@
-﻿var menuPrincpal = new MenuPrincipal();
-menuPrincpal.Ejecutar();
+﻿var menuPrincipal = new MenuPrincipal();
+await menuPrincipal.Ejecutar();

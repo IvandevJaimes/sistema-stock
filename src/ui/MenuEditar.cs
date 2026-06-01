@@ -3,11 +3,26 @@ public class MenuEditar
 {
     private ProductoController productoCtrl = new ProductoController();
 
-    public Result<Producto>? EjecutarEditar(string nombreSucursal, Producto productoSeleccionado)
+    public async Task<Result<Producto>?> EjecutarEditar(string nombreSucursal, Producto productoSeleccionado)
     {
         string nombreActual = productoSeleccionado.nombre;
         decimal precioActual = productoSeleccionado.precio;
         int cantidadActual = productoSeleccionado.cantidad;
+
+        double? extra1Actual = productoSeleccionado switch
+        {
+            Televisor t => t.pulgadas,
+            Heladera h => h.capacidad,
+            Lavarropas l => l.carga,
+            _ => null
+        };
+        string? extra2Actual = productoSeleccionado switch
+        {
+            Televisor t => t.tipoPantalla,
+            Heladera h => h.tipo,
+            Lavarropas l => l.tipo,
+            _ => null
+        };
 
         Result<Producto>? nuevo = null;
 
@@ -21,6 +36,22 @@ public class MenuEditar
             .BorderStyle(new Style(Color.Cyan));
 
         var salir = false;
+
+        var extrasOpcion1 = productoSeleccionado switch
+        {
+            Televisor => "Pulgadas",
+            Heladera => "Capacidad",
+            Lavarropas => "Carga",
+            _ => "Extra 1"
+        };
+
+        var extrasOpcion2 = productoSeleccionado switch
+        {
+            Televisor => "Tipo de pantalla",
+            Heladera => "Tipo",
+            Lavarropas => "Tipo",
+            _ => "Extra 2"
+        };
 
         while (!salir)
         {
@@ -62,7 +93,7 @@ public class MenuEditar
                 new SelectionPrompt<string>()
                 .Title("¿Qué campo querés editar?")
                 .HighlightStyle("bold")
-                .AddChoices("Nombre", "Precio", "Cantidad", "Guardar cambios", "[grey]↩ Volver[/]")
+                .AddChoices("Nombre", "Precio", "Cantidad", extrasOpcion1, extrasOpcion2, "Guardar cambios", "[grey]↩ Volver[/]")
             );
 
             switch (opcion)
@@ -106,13 +137,42 @@ public class MenuEditar
                     AnsiConsole.Clear();
                     break;
 
+                case "Pulgadas":
+                case "Capacidad":
+                case "Carga":
+                    var nuevoExtra1 = AnsiConsole.Prompt(
+                        new TextPrompt<double>($"Nuevo valor para {extrasOpcion1} (actual: {extra1Actual}):")
+                            .Validate(valor =>
+                                valor > 0
+                                    ? ValidationResult.Success()
+                                    : ValidationResult.Error($"[red]El valor de {extrasOpcion1} debe ser mayor a 0[/]")
+                            )
+                    );
+                    extra1Actual = nuevoExtra1;
+                    AnsiConsole.Clear();
+                    break;
+
+                case "Tipo de pantalla":
+                case "Tipo":
+                    var nuevoExtra2 = AnsiConsole.Prompt(
+                        new TextPrompt<string>($"Nuevo valor para {extrasOpcion2} (actual: {extra2Actual}):")
+                            .Validate(v => !string.IsNullOrWhiteSpace(v)
+                                ? ValidationResult.Success()
+                                : ValidationResult.Error($"[red]No puede estar vacío[/]"))
+                    );
+                    extra2Actual = nuevoExtra2;
+                    AnsiConsole.Clear();
+                    break;
+
                 case "Guardar cambios":
-                    var resultado = productoCtrl.ActualizarProducto(
-                        nombreSucursal,
+                    var resultado = await productoCtrl.ActualizarProducto(
                         productoSeleccionado.id,
+                        nombreSucursal,
                         nombreActual,
                         precioActual,
-                        cantidadActual
+                        cantidadActual,
+                        extra1Actual,
+                        extra2Actual
                     );
 
                     if (resultado.success)
@@ -126,7 +186,7 @@ public class MenuEditar
                         Alerta.Error(resultado.mensaje!);
                         break;
                     }
-                    
+
                 case "[grey]↩ Volver[/]":
                     salir = true; AnsiConsole.Clear();
                     break;

@@ -2,7 +2,6 @@ using Spectre.Console;
 
 public class MenuBuscar
 {
-    private SucursalController sucursalCtrl = new SucursalController();
     private ProductoController productoController = new ProductoController();
 
     private MenuEditar menuEditar = new MenuEditar();
@@ -18,9 +17,9 @@ public class MenuBuscar
                 .AddChoices(productos)
         );
     }
-    public void EjecutarBuscar(String nombreSucursal)
+    public async Task EjecutarBuscar(String nombreSucursal)
     {
-        var sucursal = sucursalCtrl.ObtenerSucursal(nombreSucursal);
+       
 
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
             .LeftJustified()
@@ -73,7 +72,8 @@ public class MenuBuscar
                 .Title("[blue]Elegir opción:[/]")
                 .HighlightStyle("bold")
                 .AddChoices(
-                    "Buscar producto",
+                    "Buscar producto por nombre",
+                    "Buscar producto por codigo",
                     "Editar producto",
                     "Eliminar producto",
                     "[grey]↩ Volver[/]"
@@ -83,12 +83,18 @@ public class MenuBuscar
             switch (opcion)
             {
 
-                case "Buscar producto":
+                case "Buscar producto por nombre":
 
                     var termino = AnsiConsole.Ask<string>("Ingresar termino de busqueda:");
-                    var respuesta = productoController.BuscarProducto(nombreSucursal, termino);
+                    var respuesta = await productoController.BuscarProductoPorNombre(nombreSucursal, termino);
 
-                    if (respuesta == null || !respuesta.success)
+                    if (!respuesta.success)
+                    {
+                        resultado.Clear();
+                        Alerta.Error(respuesta?.mensaje ?? "Ocurrió un error");
+                        break;
+                    }
+                    if (respuesta.data == null || respuesta.data.Count == 0)
                     {
                         resultado.Clear();
                         Alerta.Error(respuesta?.mensaje ?? "Ocurrió un error");
@@ -97,7 +103,25 @@ public class MenuBuscar
 
                     resultado = respuesta.data ?? new List<Producto>();
                     break;
+                case "Buscar producto por codigo":
+                    var codigo = AnsiConsole.Ask<int>("Ingresar codigo de producto:");
+                    var respuestaCodigo = await productoController.BuscarProductoPorCodigo(nombreSucursal, codigo);
 
+                    if (!respuestaCodigo.success)
+                    {
+                        resultado.Clear();
+                        Alerta.Error(respuestaCodigo?.mensaje ?? "Ocurrió un error");
+                        break;
+                    }
+                    if (respuestaCodigo.data == null)
+                    {
+                        resultado.Clear();
+                        Alerta.Error(respuestaCodigo?.mensaje ?? "Ocurrió un error");
+                        break;
+                    }
+
+                    resultado = respuestaCodigo.data ?? new List<Producto>() ;
+                    break;
                 case "Editar producto":
                     if (resultado.Count == 0)
                     {
@@ -107,7 +131,7 @@ public class MenuBuscar
                     else
                     {
                         var productoSeleccionado = SeleccionarProducto(resultado);
-                        menuEditar.EjecutarEditar(nombreSucursal, productoSeleccionado);
+                        await menuEditar.EjecutarEditar(nombreSucursal, productoSeleccionado);
                         resultado.Remove(productoSeleccionado);
                     }
                     break;
@@ -121,7 +145,7 @@ public class MenuBuscar
                     else
                     {
                         var productoSeleccionado = SeleccionarProducto(resultado);
-                        menuEliminar.EjecutarEliminar(nombreSucursal, productoSeleccionado);
+                        await menuEliminar.EjecutarEliminar(nombreSucursal, productoSeleccionado);
                         resultado.Remove(productoSeleccionado);
                     }
                     break;

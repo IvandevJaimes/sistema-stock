@@ -6,7 +6,7 @@ public class MenuVender
 
     private SucursalController sucursalController = new SucursalController();
     private MenuComprobante comprobante = new MenuComprobante();
-    public void EjecutarVender(string nombreSucursal)
+    public async Task EjecutarVender(string nombreSucursal)
     {
         AnsiConsole.Clear();
 
@@ -14,8 +14,20 @@ public class MenuVender
             .LeftJustified()
             .Color(Color.Cyan);
 
-        var productos = productoCtrl.ListarProductos(nombreSucursal);
-
+        var productos = await productoCtrl.ListarProductos(nombreSucursal);
+        if (productos.data == null)
+        {
+            AnsiConsole.MarkupLine($"[yellow]No hay productos en la sucursal {nombreSucursal}[/]");
+            AnsiConsole.MarkupLine($"[green]Puedes agregar productos desde la opción 'Gestionar'[/]");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[grey]Presiona cualquier tecla para volver...[/]");
+            Console.ReadKey();
+            return;
+        }
+        else if (productos.success == false)
+        {
+            AnsiConsole.MarkupLine($"[red]{productos.mensaje}[/]");
+        }
         var panel = new Panel("[bold white]Vender productos[/]")
             .Border(BoxBorder.Rounded)
             .BorderStyle(new Style(Color.Purple));
@@ -80,7 +92,7 @@ public class MenuVender
             {
                 case "Agregar al carrito":
 
-                    if (productos.Count == 0)
+                    if (productos?.data.Count == 0)
                     {
                         Alerta.Error("Sin productos para vender");
                         break;
@@ -94,7 +106,7 @@ public class MenuVender
                                 var disponible = p.cantidad - enCarritoTemp;
                                 return $"{p.nombre} (Disp: {disponible})";
                             })
-                            .AddChoices(productos)
+                            .AddChoices(productos?.data ?? new List<Producto>())
                     );
 
                     var existente = carrito.Find(x => x.id == productoSeleccionado.id);
@@ -156,26 +168,24 @@ public class MenuVender
                     if (carrito.Count == 0) { Alerta.Error("No hay productos agregados al carrito"); break; }
 
                     bool error = false;
+                    var resultado = await productoCtrl.VenderProducto(nombreSucursal, carrito);
 
-                    foreach (var p in carrito)
+                    if (!resultado.success)
                     {
-                        var resultado = productoCtrl.VenderProducto(nombreSucursal, p.id, p.cantidad);
-
-                        if (!resultado.success)
-                        {
-                            Alerta.Error(resultado.mensaje ?? "Error desconocido");
-                            error = true;
-                            break;
-                        }
-
-                        ingresos += resultado.data;
+                        Alerta.Error(resultado.mensaje ?? "Error desconocido");
+                        error = true;
+                        break;
                     }
+
+                    ingresos = resultado.data;
+         
                     if (!error)
                     {
-                        sucursalController.RegistrarVenta(nombreSucursal, carrito);
-                        var ventas = sucursalController.MostrarVentas(nombreSucursal);
-                        AnsiConsole.WriteLine($"Ventas registradas: {ventas?.Count} items"); 
-                        comprobante.Generar(nombreSucursal, carrito, ingresos);
+
+                        var ventas = await sucursalController.MostrarVentas(nombreSucursal);
+                        if (ventas.success && ventas.data != null)
+                        AnsiConsole.WriteLine($"Ventas registradas: {ventas.data.Count} items"); 
+                        await comprobante.Generar(nombreSucursal, carrito, ingresos);
                         carrito.Clear();
                         salir = true;
                     }

@@ -1,7 +1,7 @@
 public class Televisor : Producto
 {
-    public Televisor(int Id, string Nombre, decimal Precio, int Cantidad, double Pulgadas, string TipoPantalla)
-        : base(Id, Nombre, Precio, Cantidad)
+    public Televisor(int Id, int Codigo, string Nombre, decimal Precio, int Cantidad, double Pulgadas, string TipoPantalla)
+        : base(Id, Codigo, Nombre, Precio, Cantidad)
     {
         pulgadas = Pulgadas;
         tipoPantalla = TipoPantalla;

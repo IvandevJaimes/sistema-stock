@@ -1,26 +1,50 @@
+
 public class SucursalController
 {
     private SucursalService sucursalService = new SucursalService();
 
-    public List<Sucursal> ListarSucursales()
+    public async Task<Result<List<Sucursal>?>> ListarSucursales()  
     {
-        var sucursales = sucursalService.VerSucursales();
-        return sucursales;
+        try
+        {
+            var sucursales = await sucursalService.VerSucursales();  
+            if (sucursales == null) return Result<List<Sucursal>?>.Error("No se encontraron sucursales.");
+            return Result<List<Sucursal>?>.Ok(sucursales);
+        }
+        catch (Exception ex)
+        {
+            return Result<List<Sucursal>?>.Error(ex.Message);
+        }
     }
 
-    public Sucursal? ObtenerSucursal(string sucursalNombre)
+    public async Task<Result<Sucursal?>> ObtenerSucursal(string sucursalNombre)
     {
-        var sucursal = sucursalService.VerSucursal(sucursalNombre);
-        return sucursal;
+        try
+        {
+            if (string.IsNullOrEmpty(sucursalNombre)) return Result<Sucursal?>.Error("El nombre de la sucursal no puede estar vacío.");
+
+            var sucursal = await sucursalService.VerSucursal(sucursalNombre);
+
+            if (sucursal == null) return Result<Sucursal?>.Error("Sucursal no encontrada.");
+            return Result<Sucursal?>.Ok(sucursal);
+        }
+        catch (Exception ex)
+        {
+            return Result<Sucursal?>.Error(ex.Message);
+        }
     }
 
-    public void RegistrarVenta(string sucursalNombre, List<CarritoItem> item)
+    public async Task<Result<List<VentaDetalle>?>> MostrarVentas(string sucursalNombre)
     {
-        sucursalService.RegistrarVenta(sucursalNombre, item);
-    }
-    public List<CarritoItem>? MostrarVentas(string sucursalNombre)
-    {
-        var ventas = sucursalService.MostrarVentas(sucursalNombre);
-        return ventas;
+        try
+        {
+            if (string.IsNullOrEmpty(sucursalNombre)) return Result<List<VentaDetalle>?>.Error("El nombre de la sucursal no puede estar vacío.");
+            var ventas = await sucursalService.MostrarVentas(sucursalNombre);
+            return Result<List<VentaDetalle>?>.Ok(ventas);
+        }
+        catch (Exception ex)
+        {
+            return Result<List<VentaDetalle>?>.Error(ex.Message);
+        }
     }
 }

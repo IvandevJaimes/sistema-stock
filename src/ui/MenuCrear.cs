@@ -3,9 +3,10 @@ using Spectre.Console;
 public class MenuCrear
 {
     private ProductoController productoCtrl = new ProductoController();
-    public void EjecutarCrear(string nombreSucursal)
+    public async Task EjecutarCrear(string nombreSucursal)
     {
-        string extra1 = "", extra2 = "";
+        double extra1 = 0;
+        string extra2 = "";
         string tipoProducto = "";
         AnsiConsole.Clear();
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
@@ -23,7 +24,7 @@ public class MenuCrear
             new SelectionPrompt<string>()
                 .Title("[yellow]Seleccione el tipo de producto:[/]")
                 .HighlightStyle("bold")
-                .AddChoices("Heladera", "Lavarropa", "Televisor", "[grey]↩ Volver[/]")
+                .AddChoices("Heladera", "Lavarropas", "Televisor", "[grey]↩ Volver[/]")
         );
 
         if (tipo == "[grey]↩ Volver[/]")
@@ -38,7 +39,12 @@ public class MenuCrear
                     ? ValidationResult.Success()
                     : ValidationResult.Error("Nombre inválido"))
         );
-
+        var codigo = AnsiConsole.Prompt(
+            new TextPrompt<int>("Código del producto:")
+                .Validate(c => c > 0 && c.ToString().Length <= 4
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error("Código inválido"))
+        );
         var precio = AnsiConsole.Prompt(
             new TextPrompt<decimal>("Precio:")
                 .Validate(p => p > 0 ? ValidationResult.Success() : ValidationResult.Error("Debe ser > 0"))
@@ -53,28 +59,34 @@ public class MenuCrear
         {
             case "Heladera":
                 tipoProducto = "Heladera";
-                extra1 = AnsiConsole.Ask<string>("Capacidad (Litros):");
-                extra2 = AnsiConsole.Ask<string>("Tipo:");
+                extra1 = AnsiConsole.Prompt(
+                    new TextPrompt<double>("Capacidad (Litros):")
+                        .Validate(v => v > 0 ? ValidationResult.Success() : ValidationResult.Error("Debe ser > 0")));
+                extra2 = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Tipo:")
+                        .Validate(v => !string.IsNullOrWhiteSpace(v) ? ValidationResult.Success() : ValidationResult.Error("No puede estar vacío")));
                 break;
-            case "Lavarropa":
-                tipoProducto = "Lavarropa";
-                extra1 = AnsiConsole.Ask<string>("Capacidad (Kg):");
-                extra2 = AnsiConsole.Ask<string>("Tipo:");
+            case "Lavarropas":
+                tipoProducto = "Lavarropas";
+                extra1 = AnsiConsole.Prompt(
+                    new TextPrompt<double>("Capacidad (Kg):")
+                        .Validate(v => v > 0 ? ValidationResult.Success() : ValidationResult.Error("Debe ser > 0")));
+                extra2 = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Tipo:")
+                        .Validate(v => !string.IsNullOrWhiteSpace(v) ? ValidationResult.Success() : ValidationResult.Error("No puede estar vacío")));
                 break;
             case "Televisor":
                 tipoProducto = "Televisor";
-                extra1 = AnsiConsole.Ask<string>("Pulgadas:");
-                extra2 = AnsiConsole.Ask<string>("Tipo de Pantalla:");
+                extra1 = AnsiConsole.Prompt(
+                    new TextPrompt<double>("Pulgadas:")
+                        .Validate(v => v > 0 ? ValidationResult.Success() : ValidationResult.Error("Debe ser > 0")));
+                extra2 = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Tipo de Pantalla:")
+                        .Validate(v => !string.IsNullOrWhiteSpace(v) ? ValidationResult.Success() : ValidationResult.Error("No puede estar vacío")));
                 break;
-
-            case "[grey]↩ Volver[/]":
-                AnsiConsole.Clear();
-                break;
-
-
         }
 
-        var resultado = productoCtrl.CrearProducto(nombreSucursal, tipoProducto, nombre, precio, cantidad, Convert.ToDouble(extra1), extra2);
+        var resultado = await productoCtrl.CrearProducto(codigo, nombreSucursal, tipoProducto, nombre, precio, cantidad, extra1, extra2);
 
         if (resultado.success)
             Alerta.Exito("Producto creado correctamente");

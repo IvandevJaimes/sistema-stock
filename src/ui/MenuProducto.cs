@@ -14,15 +14,15 @@ public class MenuProducto
         return AnsiConsole.Prompt(
             new SelectionPrompt<Producto>()
                 .HighlightStyle("bold")
-                .UseConverter(p => $"{p.id} - {p.nombre} ({p.precio:C})")
+                .UseConverter(p => $"{p.id} - {p.codigo} - {p.nombre} ({p.precio:C} - {p.cantidad} unidades) - {p.GetType().Name}")
                 .PageSize(10)
                 .AddChoices(productos)
         );
     }
 
-    public void Ejecutar(string nombreSucursal)
+    public async Task Ejecutar(string nombreSucursal)
     {
-        var sucursal = sucursalCtrl.ObtenerSucursal(nombreSucursal);
+        var sucursal = await sucursalCtrl.ObtenerSucursal(nombreSucursal);
 
         var titulo = new FigletText($"Sucursal: {nombreSucursal}")
             .LeftJustified()
@@ -33,11 +33,27 @@ public class MenuProducto
         while (!salir)
         {
             AnsiConsole.Clear();
-            var productos = productoCtrl.ListarProductos(nombreSucursal);
-
+            var productos = await productoCtrl.ListarProductos(nombreSucursal);
+            if (productos.data == null)
+            {
+                if (productos.success)
+                {
+                    AnsiConsole.MarkupLine($"[yellow]No hay productos en la sucursal {nombreSucursal}[/]");
+                    AnsiConsole.MarkupLine($"[green]Puedes agregar productos desde la opción 'Gestionar'[/]");
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine($"[red]{productos.mensaje}[/]");
+                }
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine("[grey]Presiona cualquier tecla para volver...[/]");
+                Console.ReadKey();
+                return;
+            }
+            var listaProductos = productos.data;
             AnsiConsole.Write(titulo);
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[cyan]Productos totales: {productos.Count()}[/]");
+            AnsiConsole.MarkupLine($"[cyan]Productos totales: {listaProductos.Count()}[/]");
             var tabla = new Table();
             tabla.Border(TableBorder.Rounded);
             tabla.BorderColor(Color.Grey);
@@ -50,7 +66,7 @@ public class MenuProducto
             tabla.AddColumn("[bold yellow]Cantidad[/]");
             tabla.AddColumn("[bold yellow]Detalles[/]");
 
-            foreach (var p in productos)
+            foreach (var p in listaProductos)
             {
                 tabla.AddRow(
                     $"[cyan]{p.id}[/]",
@@ -78,32 +94,32 @@ public class MenuProducto
             switch (opcion)
             {
                 case "Crear producto":
-                    menuCrear.EjecutarCrear(nombreSucursal);
+                    await menuCrear.EjecutarCrear(nombreSucursal);
                     break;
                 case "Editar producto":
                     AnsiConsole.Markup("[green]Seleccionar producto a editar:[/]");
                     AnsiConsole.WriteLine();
                     AnsiConsole.WriteLine();
-                    if (productos.Count == 0)
+                    if (listaProductos.Count() == 0)
                     {
                         Alerta.Error("Sin productos para editar");
                         break;
                     }
-                    var productoSeleccionado = SeleccionarProducto(productos);
-                    menuEditar.EjecutarEditar(nombreSucursal, productoSeleccionado);
+                    var productoSeleccionado = SeleccionarProducto(listaProductos.ToList());
+                    await menuEditar.EjecutarEditar(nombreSucursal, productoSeleccionado);
                     break;
 
                 case "Eliminar producto":
                     AnsiConsole.Markup("[red]Seleccionar producto a eliminar:[/]");
                     AnsiConsole.WriteLine();
                     AnsiConsole.WriteLine();
-                    if (productos.Count == 0)
+                    if (listaProductos.Count() == 0)
                     {
                         Alerta.Error("Sin productos para eliminar");
                         break;
                     }
-                    var productoSeleccionadoABorrar = SeleccionarProducto(productos);
-                    menuEliminar.EjecutarEliminar(nombreSucursal, productoSeleccionadoABorrar);
+                    var productoSeleccionadoABorrar = SeleccionarProducto(listaProductos.ToList());
+                     await menuEliminar.EjecutarEliminar(nombreSucursal, productoSeleccionadoABorrar);
                     break;
 
                 case "[grey]↩ Volver[/]":

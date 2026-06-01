@@ -1,7 +1,7 @@
-public class Lavarropa : Producto
+public class Lavarropas : Producto
 {
-    public Lavarropa(int Id, string Nombre, decimal Precio, int Cantidad, double Carga, string Tipo)
-        : base(Id, Nombre, Precio, Cantidad)
+    public Lavarropas(int Id, int Codigo, string Nombre, decimal Precio, int Cantidad, double Carga, string Tipo)
+        : base(Id, Codigo, Nombre, Precio, Cantidad)
     {
         carga = Carga;
         tipo = Tipo;

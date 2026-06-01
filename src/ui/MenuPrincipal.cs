@@ -2,7 +2,7 @@ using Spectre.Console;
 public class MenuPrincipal
 {
     private MenuSucursal menuSucursal = new MenuSucursal();
-    public void Ejecutar()
+    public async Task Ejecutar()
     {
       
 
@@ -29,8 +29,8 @@ public class MenuPrincipal
             );
             switch (opcion)
             {
-                case "Centro": menuSucursal.Ejecutar("Centro"); break;
-                case "Norte": menuSucursal.Ejecutar("Norte"); break;
+                case "Centro": await menuSucursal.Ejecutar("Centro"); break;
+                case "Norte": await menuSucursal.Ejecutar("Norte"); break;
                 case "[grey]x Cerrar programa[/]": salir = true; AnsiConsole.Clear(); break;
 
             }

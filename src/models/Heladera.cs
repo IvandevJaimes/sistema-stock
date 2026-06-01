@@ -1,7 +1,7 @@
 public class Heladera : Producto
 {
-    public Heladera(int Id, string Nombre, decimal Precio, int Cantidad, double Capacidad, string Tipo)
-        : base(Id, Nombre, Precio, Cantidad) 
+    public Heladera(int Id, int Codigo, string Nombre, decimal Precio, int Cantidad, double Capacidad, string Tipo)
+        : base(Id, Codigo, Nombre, Precio, Cantidad) 
     {
         capacidad = Capacidad;
         tipo = Tipo;

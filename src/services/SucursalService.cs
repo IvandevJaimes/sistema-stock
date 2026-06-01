@@ -1,30 +1,57 @@
 public class SucursalService
 {
-    private List<Sucursal> sucursales = Data.GetData();
-
-    public List<Sucursal> VerSucursales()
+    private SucursalQuerys sucursalQuerys = new SucursalQuerys();
+    private VentasQuerys ventas = new VentasQuerys();
+    public async Task<List<Sucursal>> VerSucursales()
     {
+        var sucursales = new List<Sucursal>();
+        try
+        {
+            var resultados = sucursalQuerys.GetSucursales();
+            sucursales = await resultados;
+            if (sucursales == null || sucursales.Count == 0)
+            {
+                throw new Exception("No se encontraron sucursales");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
         return sucursales;
     }
-    public Sucursal? VerSucursal(string sucursalNombre)
+    public async Task<Sucursal?> VerSucursal(string sucursalNombre)
     {
-        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
-        if (sucursal == null) return null;
-        return sucursal;
-    }
-
-    public void RegistrarVenta(string sucursalNombre, List<CarritoItem> item)
-    {
-        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
-        if (sucursal != null)
+        try
         {
-            sucursal.RegistrarVentas(item);
+            var sucursales = await VerSucursales();
+            var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
+            if (sucursal == null) throw new Exception("Sucursal no encontrada");
+            return sucursal;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
     }
-    public List<CarritoItem>? MostrarVentas(string sucursalNombre)
+
+   
+    public async Task<List<VentaDetalle>?> MostrarVentas(string sucursalNombre)
     {
-        var sucursal = sucursales.Find(s => s.nombre == sucursalNombre);
-        return sucursal?.ventas;
+        try
+        {
+            var sucursal = await VerSucursal(sucursalNombre);
+            if (sucursal == null)
+            {
+                throw new Exception("Sucursal no encontrada");
+            }
+            return await ventas.GetVentas(sucursal.idSucursal);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+      
     }
 
 }

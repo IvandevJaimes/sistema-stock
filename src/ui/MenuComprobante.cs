@@ -3,25 +3,29 @@ public class MenuComprobante
 {
 
     private SucursalController sucursalCtrl = new SucursalController();
-    public void Generar(string nombreSucursal, List<CarritoItem> carrito, decimal total)
+    public async Task Generar(string nombreSucursal, List<CarritoItem> carrito, decimal total)
     {
         var numero = $"V-{DateTime.Now:yyyyMMddHHmmss}";
         var fecha = DateTime.Now;
 
-        EjecutarComprobante(nombreSucursal, carrito, total, numero, fecha);
+        await EjecutarComprobante(nombreSucursal, carrito, total, numero, fecha);
     }
 
-    private void EjecutarComprobante(string sucursal, List<CarritoItem> carrito, decimal total, string numero, DateTime fecha)
-
+    private async Task EjecutarComprobante(string sucursal, List<CarritoItem> carrito, decimal total, string numero, DateTime fecha)
     {
-        var sucursalObj = sucursalCtrl.ObtenerSucursal(sucursal);
+        var sucursalObj = await sucursalCtrl.ObtenerSucursal(sucursal);
+        if (!sucursalObj.success || sucursalObj.data == null)
+        {
+            Alerta.Error("No se pudo generar el comprobante.");
+            return;
+        }
         AnsiConsole.Clear();
 
         AnsiConsole.Write(new Rule("[yellow]Comprobante de Venta[/]").RuleStyle("grey"));
 
         AnsiConsole.MarkupLine($"[bold]N°:[/] {numero}");
-        AnsiConsole.MarkupLine($"[bold]Sucursal:[/] {sucursalObj?.nombre}");
-        AnsiConsole.MarkupLine($"[bold]Dirección:[/] {sucursalObj?.direccion}");
+        AnsiConsole.MarkupLine($"[bold]Sucursal:[/] {sucursalObj?.data.nombre}");
+
         AnsiConsole.MarkupLine($"[bold]Fecha:[/] {fecha:dd/MM/yyyy HH:mm}");
 
         AnsiConsole.Write(new Rule().RuleStyle("grey"));
