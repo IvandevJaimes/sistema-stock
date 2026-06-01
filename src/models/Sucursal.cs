@@ -1,3 +1,4 @@
+//modelo para representar una sucursal 
 public class Sucursal
 {
     public Sucursal(
@@ -14,13 +15,13 @@ public class Sucursal
         stock = Stock ?? new List<Producto>();
         ventas = Ventas ?? new List<VentaDetalle>();
     }
-    public string nombre { get; }
+    public string nombre { get; } 
     public int idSucursal { get; }
     public string direccion { get; }
-    public List<Producto> stock { get; private set; }
-    public List<VentaDetalle> ventas { get; private set; }
+    public List<Producto> stock { get; }
+    public List<VentaDetalle> ventas { get;}
+    //atributos solo con getter para que no puedan ser modificados desde otra parte 
     
-
     public List<VentaDetalle> verVentas()
     {
         return ventas;

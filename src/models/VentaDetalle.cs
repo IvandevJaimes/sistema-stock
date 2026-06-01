@@ -1,3 +1,4 @@
+//modelo para representar el detalle de una venta
 public class VentaDetalle
 {
     public int idVenta { get; set; }

@@ -1,7 +1,8 @@
 using MySqlConnector;
+
+// clase encargada de manejar las consultas relacionadas con los productos en la base de datos 
 public class ProductosQuerys
 {
-    private ConexionDB conexionDB = new ConexionDB();
 
     public async Task<List<Producto>> GetProductos(int IdSucursal)
     {
@@ -18,14 +19,14 @@ public class ProductosQuerys
         LEFT JOIN Lavarropas l ON p.IdProducto = l.IdProducto
         WHERE p.IdSucursal = @IdSucursal;";
 
-        var db = conexionDB.AbrirConexion();
+        var db = await ConexionDB.AbrirConexion();
         var productos = new List<Producto>();
 
         try
         {
             var commando = new MySqlCommand(consulta, db);
-            commando.Parameters.AddWithValue("@IdSucursal", IdSucursal);
-            var reader = await commando.ExecuteReaderAsync();
+            commando.Parameters.AddWithValue("@IdSucursal", IdSucursal); // previene inyeccion SQL
+            var reader = await commando.ExecuteReaderAsync(); // ejecutar la consulta de forma asincrona
             while (await reader.ReadAsync())
             {
                 var id = reader.GetInt32("IdProducto");
@@ -34,7 +35,7 @@ public class ProductosQuerys
                 var precio = reader.GetDecimal("Precio");
                 var stock = reader.GetInt32("Stock");
                 var tipo = reader.GetString("TipoProducto");
-                Producto producto = tipo switch
+                Producto producto = tipo switch // usar el operador switch para crear la instancia del producto correcto segun su tipo
                 {
                     "Televisor" => new Televisor(
                         id, codigo, nombre, precio, stock,
@@ -59,14 +60,14 @@ public class ProductosQuerys
         }
         finally
         {
-            db.Close();
+            db.Close(); // cerrar siempre la conexion a la db. el finally se ejecuta si o si sin importar si hubo error o no
         }
         return productos;
     }
 
-    public async Task CrearProducto(Producto producto, int sucursalID)
+    public async Task<int> CrearProducto(Producto producto, int sucursalID)
     {
-        var db = conexionDB.AbrirConexion();
+        var db = await ConexionDB.AbrirConexion();
         var tipo = producto.GetType().Name;
 
         try
@@ -75,9 +76,11 @@ public class ProductosQuerys
             var sqlProducto = @"
             INSERT INTO Producto (Codigo, Nombre, Precio, Stock, TipoProducto, IdSucursal)
             VALUES (@Codigo, @Nombre, @Precio, @Stock, @TipoProducto, @IdSucursal);
-            SELECT LAST_INSERT_ID();";
+            SELECT LAST_INSERT_ID();"; 
+            // obtener el id del producto recien insertado para luego usarlo en la tabla hija correspondiente ya que es autoincremental y no lo conocemos antes de insertarlo
 
             var comando = new MySqlCommand(sqlProducto, db);
+            //usar @ para prevenir inyeccion SQL y agregar los parametros necesarios para la consulta
             comando.Parameters.AddWithValue("@Codigo", producto.codigo);
             comando.Parameters.AddWithValue("@Nombre", producto.nombre);
             comando.Parameters.AddWithValue("@Precio", producto.precio);
@@ -92,10 +95,12 @@ public class ProductosQuerys
                 "Heladera" => "INSERT INTO Heladera (IdProducto, CapacidadLitros, Tipo) VALUES (@Id, @Extra1, @Extra2)",
                 "Lavarropas" => "INSERT INTO Lavarropas (IdProducto, CargaKg, Tipo) VALUES (@Id, @Extra1, @Extra2)",
                 _ => throw new Exception("Tipo inválido")
-            };
+            }; // aqui se define el tipo de producto correcto y la consulta correcta para insertar los datos polimorficos a cada tabla hija
+
             var comandoHija = new MySqlCommand(sqlHija, db);
             comandoHija.Parameters.AddWithValue("@Id", idProducto);
-            if (producto is Televisor t)
+
+            if (producto is Televisor t) //se usa is para verificar el tipo del producto y agregar los parametros correspondientes para cada tipo de producto
             {
                 comandoHija.Parameters.AddWithValue("@Extra1", t.pulgadas);
                 comandoHija.Parameters.AddWithValue("@Extra2", t.tipoPantalla);
@@ -112,12 +117,13 @@ public class ProductosQuerys
             }
             await comandoHija.ExecuteNonQueryAsync();
 
+            return idProducto; //devolver el id del producto recien creado 
         }
         catch (Exception ex)
         {
-            if (ex is MySqlException mysqlEx && mysqlEx.Number == 1062)
+            if (ex is MySqlException mysqlEx && mysqlEx.Number == 1062) // verificar si el error es por clave duplicada ya que en la tabla Producto el campo Codigo es unico por sucursal (UNIQUE)
                 throw new Exception("Ya existe un producto con el mismo código en esta sucursal");
-            throw new Exception("Error al crear el producto: " + ex.Message);
+            throw new Exception("Error al crear el producto: " + ex.Message); 
         }
         finally
         {
@@ -126,11 +132,13 @@ public class ProductosQuerys
     }
 
     public async Task EliminarProducto(int idProducto)
+    // usa task sin generico ya que no devuelve nada. es void pero asincrono
     {
-        var db = conexionDB.AbrirConexion();
+        var db = await ConexionDB.AbrirConexion();
         try
         {
-            var sql = "DELETE FROM Producto WHERE IdProducto = @Id";
+            //eliminar el producto por su id y desde la tabla padre. se eliminaran tambian las hijas gracias a (ON DELETE CASCADE) para que no queden datos huerfanos
+            var sql = "DELETE FROM Producto WHERE IdProducto = @Id"; 
             var comando = new MySqlCommand(sql, db);
             comando.Parameters.AddWithValue("@Id", idProducto);
             await comando.ExecuteNonQueryAsync();
@@ -149,7 +157,7 @@ public class ProductosQuerys
 
     public async Task ActualizarProducto(int idProducto, Producto producto, string tipo)
     {
-        var db = conexionDB.AbrirConexion();
+        var db = await ConexionDB.AbrirConexion();
         try
         {
             var sqlProducto = @"
@@ -164,7 +172,7 @@ public class ProductosQuerys
             comando.Parameters.AddWithValue("@Stock", producto.cantidad);
             await comando.ExecuteNonQueryAsync();
 
-            string sqlHija = tipo switch
+            string sqlHija = tipo switch //crear la query correcta segun tipo para actualizar los datos extras
             {
                 "Televisor" => "UPDATE Televisor SET Pulgadas = @Extra1, TipoPantalla = @Extra2 WHERE IdProducto = @Id",
                 "Heladera" => "UPDATE Heladera SET CapacidadLitros = @Extra1, Tipo = @Extra2 WHERE IdProducto = @Id",
@@ -199,4 +207,6 @@ public class ProductosQuerys
             db.Close();
         }
     }
+
+    // primera capa. luego pasa ser usada unicamente por la capa de services o la capa de negocio. manteniendo una unica responsabilidad
 }

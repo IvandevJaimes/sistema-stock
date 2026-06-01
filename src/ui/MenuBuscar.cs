@@ -1,5 +1,6 @@
 using Spectre.Console;
 
+//pantalla de busqueda de productos por nombre o codigo con resultados en tabla y opciones de editar/eliminar desde los resultados
 public class MenuBuscar
 {
     private ProductoController productoController = new ProductoController();
@@ -31,18 +32,20 @@ public class MenuBuscar
             .BorderStyle(new Style(Color.Orange1));
         var salir = false;
 
-        List<Producto> resultado = new();
+        List<Producto> resultado = new(); //lista de resultados que se va llenando con las busquedas y persiste entre iteraciones
 
         while (!salir)
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(titulo);
             AnsiConsole.Write(panel);
+            //tabla que muestra los resultados de la ultima busqueda. se actualiza cada vez que se hace una nueva busqueda
             var tabla = new Table();
             tabla.Border(TableBorder.Rounded);
             tabla.BorderColor(Color.Grey);
             tabla.Expand();
             tabla.AddColumn("[bold yellow]ID[/]");
+            tabla.AddColumn("[bold yellow]Código[/]");
             tabla.AddColumn("[bold yellow]Nombre[/]");
             tabla.AddColumn("[bold yellow]Tipo[/]");
             tabla.AddColumn("[bold yellow]Precio[/]");
@@ -56,6 +59,7 @@ public class MenuBuscar
                 {
                     tabla.AddRow(
                         $"[cyan]{p.id}[/]",
+                        $"[cyan]{p.codigo}[/]",
                         $"[green]{p.nombre}[/]",
                         $"[magenta]{p.GetType().Name}[/]",
                         $"[yellow]{p.precio:C}[/]",
@@ -84,7 +88,7 @@ public class MenuBuscar
             {
 
                 case "Buscar producto por nombre":
-
+                    //busqueda parcial case-insensitive que devuelve todos los productos que contengan el termino en el nombre
                     var termino = AnsiConsole.Ask<string>("Ingresar termino de busqueda:");
                     var respuesta = await productoController.BuscarProductoPorNombre(nombreSucursal, termino);
 
@@ -104,6 +108,7 @@ public class MenuBuscar
                     resultado = respuesta.data ?? new List<Producto>();
                     break;
                 case "Buscar producto por codigo":
+                    //busqueda exacta por codigo numerico unico por sucursal
                     var codigo = AnsiConsole.Ask<int>("Ingresar codigo de producto:");
                     var respuestaCodigo = await productoController.BuscarProductoPorCodigo(nombreSucursal, codigo);
 
@@ -123,6 +128,7 @@ public class MenuBuscar
                     resultado = respuestaCodigo.data ?? new List<Producto>() ;
                     break;
                 case "Editar producto":
+                    //editar un producto directamente desde los resultados de la busqueda
                     if (resultado.Count == 0)
                     {
                         Alerta.Error("Debe hacer una busqueda si desea editar un producto");
@@ -132,7 +138,7 @@ public class MenuBuscar
                     {
                         var productoSeleccionado = SeleccionarProducto(resultado);
                         await menuEditar.EjecutarEditar(nombreSucursal, productoSeleccionado);
-                        resultado.Remove(productoSeleccionado);
+                        resultado.Remove(productoSeleccionado); //remover de la lista local porque ya no existe en la bd (se actualizo y podria tener otro nombre/codigo)
                     }
                     break;
 

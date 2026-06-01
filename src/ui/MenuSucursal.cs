@@ -1,4 +1,5 @@
 using Spectre.Console;
+//menu central de cada sucursal. desde aca se accede a gestion, busqueda, ventas e historial
 public class MenuSucursal
 {
     private ProductoController productoCtrl = new ProductoController();
@@ -9,7 +10,7 @@ public class MenuSucursal
     private MenuVentas menuVentas = new MenuVentas();
     public async Task Ejecutar(string nombreSucursal)
     {
-        
+        //cargar los productos al inicio para conocer la cantidad disponible y mostrar feedback rapido
         var productos = await productoCtrl.ListarProductos(nombreSucursal);
 
         if (productos.data == null)

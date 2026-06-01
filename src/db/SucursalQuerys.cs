@@ -1,12 +1,11 @@
 using MySqlConnector;
 public class SucursalQuerys
 {
-    private ConexionDB conexionDB = new ConexionDB();
-
     public async Task<List<Sucursal>> GetSucursales()
+    //devuelve una lista de sucursales con sus datos basicos sin productos ni ventas
     {
         var consulta = "SELECT * FROM Sucursal";
-        var db = conexionDB.AbrirConexion();
+        var db = await ConexionDB.AbrirConexion();
         var sucursales = new List<Sucursal>();
         try
         {
@@ -30,5 +29,5 @@ public class SucursalQuerys
         }
         return sucursales;
     }   
-
+    // esta capa luego es usada por la capa de servicios unicamente
 }

@@ -1,3 +1,4 @@
+//capa controller, se encarga de recibir las solicitudes de la capa interfaz, procesar los datos necesarios y enviar la respuesta correspondiente
 public class ProductoController
 {
     private ProductoService productoService = new ProductoService();
@@ -8,6 +9,7 @@ public class ProductoController
     {
         try
         {
+            //validar los datos recibidos, si alguno no es valido devolver el resultado con error y un mensaje descriptivo
             if (codigo <= 0) return Result<Producto>.Error("El código del producto debe ser mayor a cero.");
             if (codigo > 9999) return Result<Producto>.Error("El código del producto no puede ser mayor a 9999.");
 
@@ -20,6 +22,8 @@ public class ProductoController
             if (precio <= 0) return Result<Producto>.Error("El precio debe ser mayor a cero.");
             if (cantidad < 0) return Result<Producto>.Error("La cantidad no puede ser negativa.");
 
+    
+            //una vez validados los datos, llamar al servicio para crear el producto y devolver el resultado con el producto creado o con el error que se haya producido
             var nuevoProducto = await productoService.PostProducto(codigo, sucursalNombre, tipo, nombre, precio, cantidad, extra1, extra2);
             return Result<Producto>.Ok(nuevoProducto);
         }
@@ -35,6 +39,7 @@ public class ProductoController
     {
         try
         {
+            //validar los datos recibidos, si alguno no es valido devolver el resultado con error y un mensaje descriptivo. en este caso solo se validan los datos que se van a actualizar, ya que el idProducto y sucursalNombre son necesarios para identificar el producto a actualizar pero no se pueden modificar
             if (idProducto <= 0) return Result<Producto>.Error("El ID del producto debe ser mayor a cero.");
 
             if (string.IsNullOrWhiteSpace(sucursalNombre)) return Result<Producto>.Error("El nombre de la sucursal no puede estar vacío.");
@@ -59,8 +64,11 @@ public class ProductoController
         {
             if (string.IsNullOrWhiteSpace(sucursalNombre)) return Result<Producto>.Error("El nombre de la sucursal no puede estar vacío.");
             if (id <= 0) return Result<Producto>.Error("El ID del producto debe ser mayor a cero.");
+            //validar que el usuario haya ingresado un nombre de sucursal y un id de producto validos, si no devolver el resultado con error y un mensaje descriptivo
+
             var productoEliminar = await productoService.DeleteProducto(sucursalNombre, id);
             return Result<Producto>.Ok(productoEliminar);
+     
 
         }
         catch (Exception ex)
@@ -79,7 +87,7 @@ public class ProductoController
 
             await productoService.RegistrarVenta(sucursalNombre, items);
 
-            return Result<decimal>.Ok(items.Sum(i => i.cantidad * i.precio));
+            return Result<decimal>.Ok(items.Sum(i => i.cantidad * i.precio)); //una vez registrada la venta, devolver el generico con decimal calculando el total de la venta
         }
         catch (Exception ex)
         {
@@ -93,7 +101,7 @@ public class ProductoController
         {
             if (string.IsNullOrWhiteSpace(sucursalNombre)) return Result<List<Producto>>.Error("El nombre de la sucursal no puede estar vacío.");
             var productosObtenidos = await productoService.GetProductos(sucursalNombre);
-            return Result<List<Producto>>.Ok(productosObtenidos);
+            return Result<List<Producto>>.Ok(productosObtenidos); //devolver el resultado con la lista de productos obtenida, puede ser vacía si no se encontraron productos para esa sucursal
         }
         catch (Exception ex)
         {
@@ -108,6 +116,7 @@ public class ProductoController
         {
             if (string.IsNullOrWhiteSpace(sucursalNombre)) return Result<List<Producto>>.Error("El nombre de la sucursal no puede estar vacío.");
             if (string.IsNullOrWhiteSpace(productoNombre)) return Result<List<Producto>>.Error("El nombre del producto no puede estar vacío.");
+            //validar que se hayan ingresado los datos para realizar la busqueda, si no devolver el resultado con error y un mensaje descriptivo
 
             var productos = await productoService.BuscarProductoPorNombre(sucursalNombre, productoNombre);
             return Result<List<Producto>>.Ok(productos);
@@ -124,7 +133,7 @@ public class ProductoController
         {
             if (string.IsNullOrWhiteSpace(sucursalNombre)) return Result<List<Producto>>.Error("El nombre de la sucursal no puede estar vacío.");
             if (productoCodigo <= 0) return Result<List<Producto>>.Error("El código del producto debe ser mayor a cero.");
-
+            
             var productos = await productoService.BuscarProductoPorCodigo(sucursalNombre, productoCodigo);
             return Result<List<Producto>>.Ok(productos);
         }

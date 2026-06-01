@@ -1,4 +1,5 @@
 using Spectre.Console;
+//pantalla de confirmacion antes de eliminar un producto, mostrando todos sus datos y pidiendo confirmacion explicita
 public class MenuEliminar
 {
     private ProductoController productoCtrl = new ProductoController();
@@ -12,11 +13,13 @@ public class MenuEliminar
             .Border(BoxBorder.Rounded)
             .BorderStyle(new Style(Color.Red));
 
+        //tabla con los datos completos del producto para que el usuario verifique antes de eliminar
         var tabla = new Table();
         tabla.Border(TableBorder.Rounded);
         tabla.BorderColor(Color.Grey);
         tabla.Expand();
         tabla.AddColumn("[bold yellow]ID[/]");
+        tabla.AddColumn("[bold yellow]Código[/]");
         tabla.AddColumn("[bold yellow]Nombre[/]");
         tabla.AddColumn("[bold yellow]Tipo[/]");
         tabla.AddColumn("[bold yellow]Precio[/]");
@@ -24,6 +27,7 @@ public class MenuEliminar
         tabla.AddColumn("[bold yellow]Detalles[/]");
         tabla.AddRow(
             $"[cyan]{productoSeleccionado.id}[/]",
+            $"[cyan]{productoSeleccionado.codigo}[/]",
             $"[green]{productoSeleccionado.nombre}[/]",
             $"[magenta]{productoSeleccionado.GetType().Name}[/]",
             $"[yellow]{productoSeleccionado.precio:C}[/]",
@@ -44,6 +48,7 @@ public class MenuEliminar
         switch (opcion)
         {
             case "Eliminar este producto":
+                //usar ConfirmationPrompt para evitar eliminaciones accidentales
                 var confirmar = AnsiConsole.Prompt(
                     new ConfirmationPrompt($"¿Estás seguro de eliminar '{productoSeleccionado.nombre}'?")
                 );

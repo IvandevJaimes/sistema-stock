@@ -1,5 +1,6 @@
 
 using Spectre.Console;
+//historial de ventas de la sucursal con detalle de productos vendidos, cantidades y ganancias totales
 public class MenuVentas
 {
     private SucursalController sucursalController = new SucursalController();
@@ -22,6 +23,7 @@ public class MenuVentas
             AnsiConsole.Write(panel);
             AnsiConsole.WriteLine();
 
+            //obtener todas las ventas de la sucursal desde la base de datos
             var ventas = await sucursalController.MostrarVentas(nombreSucursal);
 
             if (ventas.success == false)

@@ -1,5 +1,6 @@
 using Spectre.Console;
 
+//pantalla principal de gestion de productos con tabla interactiva y opciones de crear, editar y eliminar
 public class MenuProducto
 {
     private SucursalController sucursalCtrl = new SucursalController();
@@ -9,6 +10,7 @@ public class MenuProducto
     private MenuEliminar menuEliminar = new MenuEliminar();
 
     private MenuCrear menuCrear = new MenuCrear();
+    //selector interactivo de productos usando SelectionPrompt con el converter para mostrar info relevante
     private Producto SeleccionarProducto(List<Producto> productos)
     {
         return AnsiConsole.Prompt(
@@ -33,7 +35,7 @@ public class MenuProducto
         while (!salir)
         {
             AnsiConsole.Clear();
-            var productos = await productoCtrl.ListarProductos(nombreSucursal);
+            var productos = await productoCtrl.ListarProductos(nombreSucursal); //recargar la lista en cada iteracion para reflejar cambios
             if (productos.data == null)
             {
                 if (productos.success)
@@ -54,12 +56,14 @@ public class MenuProducto
             AnsiConsole.Write(titulo);
             AnsiConsole.WriteLine();
             AnsiConsole.MarkupLine($"[cyan]Productos totales: {listaProductos.Count()}[/]");
+            //tabla con todos los productos de la sucursal incluyendo datos polimorficos segun el tipo
             var tabla = new Table();
             tabla.Border(TableBorder.Rounded);
             tabla.BorderColor(Color.Grey);
             tabla.Expand();
 
             tabla.AddColumn("[bold yellow]ID[/]");
+            tabla.AddColumn("[bold yellow]Código[/]");
             tabla.AddColumn("[bold yellow]Nombre[/]");
             tabla.AddColumn("[bold yellow]Tipo[/]");
             tabla.AddColumn("[bold yellow]Precio[/]");
@@ -70,6 +74,7 @@ public class MenuProducto
             {
                 tabla.AddRow(
                     $"[cyan]{p.id}[/]",
+                    $"[cyan]{p.codigo}[/]",
                     $"[green]{p.nombre}[/]",
                     $"[magenta]{p.GetType().Name}[/]",
                     $"[yellow]{p.precio:C}[/]",

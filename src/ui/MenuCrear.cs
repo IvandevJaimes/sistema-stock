@@ -1,5 +1,6 @@
 using Spectre.Console;
 
+//formulario interactivo paso a paso para la creacion de un nuevo producto con validacion en cada campo
 public class MenuCrear
 {
     private ProductoController productoCtrl = new ProductoController();
@@ -33,6 +34,7 @@ public class MenuCrear
             return;
         }
 
+        //campos comunes a todos los productos: nombre, codigo unico, precio y cantidad en stock
         var nombre = AnsiConsole.Prompt(
             new TextPrompt<string>("Nombre del producto:")
                 .Validate(n => !string.IsNullOrWhiteSpace(n) && n.Length <= 50
@@ -55,6 +57,7 @@ public class MenuCrear
                 .Validate(c => c >= 0 ? ValidationResult.Success() : ValidationResult.Error("Debe ser >= 0"))
         );
 
+        //campos especificos segun el tipo de producto seleccionado (heladera, lavarropas o televisor)
         switch (tipo)
         {
             case "Heladera":
@@ -86,6 +89,7 @@ public class MenuCrear
                 break;
         }
 
+        //enviar los datos al controller que se encarga de validarlos y pasarlos al service
         var resultado = await productoCtrl.CrearProducto(codigo, nombreSucursal, tipoProducto, nombre, precio, cantidad, extra1, extra2);
 
         if (resultado.success)

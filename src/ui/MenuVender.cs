@@ -1,8 +1,9 @@
 using Spectre.Console;
+//carrito de compras interactivo con control de stock en tiempo real y registro de ventas con transaccion
 public class MenuVender
 {
     private ProductoController productoCtrl = new ProductoController();
-    List<CarritoItem> carrito = new List<CarritoItem>();
+    List<CarritoItem> carrito = new List<CarritoItem>(); //lista temporal de items que persiste durante toda la sesion de venta
 
     private SucursalController sucursalController = new SucursalController();
     private MenuComprobante comprobante = new MenuComprobante();
@@ -14,6 +15,7 @@ public class MenuVender
             .LeftJustified()
             .Color(Color.Cyan);
 
+        //cargar todos los productos disponibles para la venta. si no hay productos se informa y se vuelve
         var productos = await productoCtrl.ListarProductos(nombreSucursal);
         if (productos.data == null)
         {
@@ -52,6 +54,7 @@ public class MenuVender
             tabla.AddColumn("[bold yellow]Cantidad[/]");
             tabla.AddColumn("[bold yellow]Subtotal[/]");
 
+            //mostrar los items del carrito o una fila vacia si no hay nada. el total siempre se calcula y se muestra
             if (carrito.Count > 0)
             {
                 foreach (var p in carrito)
@@ -91,7 +94,7 @@ public class MenuVender
             switch (opcion)
             {
                 case "Agregar al carrito":
-
+                    //seleccionar producto con control de stock en tiempo real: descuenta lo que ya esta en el carrito del stock disponible
                     if (productos?.data.Count == 0)
                     {
                         Alerta.Error("Sin productos para vender");
@@ -112,7 +115,7 @@ public class MenuVender
                     var existente = carrito.Find(x => x.id == productoSeleccionado.id);
                     int enCarrito = existente?.cantidad ?? 0;
 
-                    int disponibleReal = productoSeleccionado.cantidad - enCarrito;
+                    int disponibleReal = productoSeleccionado.cantidad - enCarrito; //stock real menos lo reservado en el carrito
 
                     if (disponibleReal <= 0)
                     {
@@ -127,6 +130,7 @@ public class MenuVender
                                 : ValidationResult.Error("[red]Stock insuficiente[/]"))
                     );
 
+                    //si el producto ya estaba en el carrito, se suma la cantidad. si no, se agrega como nuevo item
                     if (existente != null)
                     {
                         existente.cantidad += cantidadSeleccionada;
@@ -168,7 +172,7 @@ public class MenuVender
                     if (carrito.Count == 0) { Alerta.Error("No hay productos agregados al carrito"); break; }
 
                     bool error = false;
-                    var resultado = await productoCtrl.VenderProducto(nombreSucursal, carrito);
+                    var resultado = await productoCtrl.VenderProducto(nombreSucursal, carrito); //registrar la venta con transaccion en la base de datos
 
                     if (!resultado.success)
                     {
@@ -181,7 +185,7 @@ public class MenuVender
          
                     if (!error)
                     {
-
+                        //si la venta se registro correctamente, mostrar las ventas actualizadas y generar el comprobante
                         var ventas = await sucursalController.MostrarVentas(nombreSucursal);
                         if (ventas.success && ventas.data != null)
                         AnsiConsole.WriteLine($"Ventas registradas: {ventas.data.Count} items"); 
@@ -193,7 +197,7 @@ public class MenuVender
 
                 case "[grey]↩ Volver[/]":
                     salir = true;
-                    carrito.Clear();
+                    carrito.Clear(); //limpiar el carrito al salir para no arrastrar items en la proxima sesion
                     break;
             }
 
